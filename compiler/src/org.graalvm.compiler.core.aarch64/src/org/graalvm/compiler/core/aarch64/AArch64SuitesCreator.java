@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, 2019, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2015, 2020, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -29,6 +29,8 @@ import java.util.ListIterator;
 
 import org.graalvm.compiler.debug.GraalError;
 import org.graalvm.compiler.java.DefaultSuitesCreator;
+import org.graalvm.compiler.lir.aarch64.AArch64RedundantInstructionElimination;
+import org.graalvm.compiler.lir.phases.LIRSuites;
 import org.graalvm.compiler.nodes.graphbuilderconf.GraphBuilderConfiguration.Plugins;
 import org.graalvm.compiler.options.OptionValues;
 import org.graalvm.compiler.phases.BasePhase;
@@ -72,5 +74,12 @@ public class AArch64SuitesCreator extends DefaultSuitesCreator {
             throw GraalError.shouldNotReachHere("Cannot find phase to insert AArch64ReadReplacementPhase");
         }
         return suites;
+    }
+
+    @Override
+    public LIRSuites createLIRSuites(OptionValues options) {
+        LIRSuites lirSuites = super.createLIRSuites(options);
+        lirSuites.getPreAllocationOptimizationStage().prependPhase(new AArch64RedundantInstructionElimination());
+        return lirSuites;
     }
 }

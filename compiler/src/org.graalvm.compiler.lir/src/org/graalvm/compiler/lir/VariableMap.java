@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, 2018, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2014, 2020, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -22,24 +22,22 @@
  * or visit www.oracle.com if you need additional information or have any
  * questions.
  */
-package org.graalvm.compiler.lir.constopt;
+package org.graalvm.compiler.lir;
 
 import java.util.ArrayList;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-
-import org.graalvm.compiler.lir.Variable;
 
 /**
  * Maps variables to a generic type.
  *
  * TODO (je) evaluate data structure
  */
-class VariableMap<T> {
+public class VariableMap<T> {
 
     private final ArrayList<T> content;
 
-    VariableMap() {
+    public VariableMap() {
         content = new ArrayList<>();
     }
 
@@ -87,4 +85,46 @@ class VariableMap<T> {
         }
     }
 
+    public boolean contains(Predicate<T> predicate) {
+        for (int i = 0; i < content.size(); i++) {
+            T e = content.get(i);
+            if (e != null && predicate.test(e)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isEmpty() {
+        if (content.isEmpty()) {
+            return true;
+        }
+
+        for (T e : content) {
+            if (e != null) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        if (content.isEmpty()) {
+            return "";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (T e : content) {
+            if (e != null) {
+                sb.append(e.toString());
+                sb.append(",");
+            }
+        }
+
+        if (sb.indexOf(",") != -1) {
+            sb.deleteCharAt(sb.lastIndexOf(","));
+        }
+        return sb.toString();
+    }
 }

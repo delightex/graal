@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, 2019, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2014, 2020, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -50,6 +50,7 @@ import org.graalvm.compiler.lir.LIRInstruction.OperandMode;
 import org.graalvm.compiler.lir.StandardOp.LoadConstantOp;
 import org.graalvm.compiler.lir.ValueConsumer;
 import org.graalvm.compiler.lir.Variable;
+import org.graalvm.compiler.lir.VariableMap;
 import org.graalvm.compiler.lir.constopt.ConstantTree.Flags;
 import org.graalvm.compiler.lir.constopt.ConstantTree.NodeCost;
 import org.graalvm.compiler.lir.gen.LIRGenerationResult;
