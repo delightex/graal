@@ -40,9 +40,10 @@ import time
 import functools
 import zipfile
 import mx
-import mx_substratevm
-import mx_graal_benchmark
 import mx_benchmark
+import mx_substratevm
+import mx_java_benchmarks
+import mx_compiler
 
 _suite = mx.suite("substratevm")
 
@@ -60,6 +61,7 @@ _NANOS_PER_SEC = 10 ** 9
 _conf_arg_prefix = '--config='
 _IMAGE_BENCH_REPETITIONS = 3
 _IMAGE_WARM_UP_ITERATIONS = 3
+_successful_stage_pattern = re.compile(r'Successfully finished the last specified stage:.*$', re.MULTILINE)
 
 @contextmanager
 def _timedelta(name, out=print):
@@ -312,12 +314,11 @@ def run_js(vmArgs, jsArgs, nonZeroIsFatal, out, err, cwd):
 def extract_archive(path, extracted_name):
     extracted_archive = mx.join(mx.dirname(path), extracted_name)
     if not mx.exists(extracted_archive):
-        os.makedirs(extracted_archive)
-        arc = zipfile.ZipFile(path, 'r')
-        arc.extractall(extracted_archive)
-        arc.close()
+        # There can be multiple processes doing this so be atomic about it
+        with mx_compiler.SafeDirectoryUpdater(extracted_archive, create=True) as sdu:
+            with zipfile.ZipFile(path, 'r') as zf:
+                zf.extractall(sdu.directory)
     return extracted_archive
-
 
 def list_jars(path):
     jars = []
@@ -333,8 +334,12 @@ _RENAISSANCE_EXTRA_AGENT_ARGS = [
 ]
 
 RENAISSANCE_EXTRA_PROFILE_ARGS = [
+    # extra-profile-run-arg is used to pass a number of instrumentation image run iterations
     '-Dnative-image.benchmark.extra-profile-run-arg=-r',
-    '-Dnative-image.benchmark.extra-profile-run-arg=3'
+    '-Dnative-image.benchmark.extra-profile-run-arg=1',
+    # extra-agent-profile-run-arg is used to pass a number of agent runs to provide profiles
+    '-Dnative-image.benchmark.extra-agent-profile-run-arg=-r',
+    '-Dnative-image.benchmark.extra-agent-profile-run-arg=5'
 ]
 
 _renaissance_config = {
@@ -343,7 +348,7 @@ _renaissance_config = {
     "scala-kmeans"     : ("scala-stdlib", 12),
     "mnemonics"        : ("jdk-streams", 12),
     "par-mnemonics"    : ("jdk-streams", 12),
-    "rx-scrabble"      : ("rx", 11),
+    "rx-scrabble"      : ("rx", 12),
     "als"              : ("apache-spark", 11),
     "chi-square"       : ("apache-spark", 11),
     "db-shootout"      : ("database", 11), # GR-17975, GR-17943 (with --report-unsupported-elements-at-runtime)
@@ -373,7 +378,7 @@ def benchmark_scalaversion(benchmark):
     return _renaissance_config[benchmark][1]
 
 
-class RenaissanceNativeImageBenchmarkSuite(mx_graal_benchmark.RenaissanceBenchmarkSuite): #pylint: disable=too-many-ancestors
+class RenaissanceNativeImageBenchmarkSuite(mx_java_benchmarks.RenaissanceBenchmarkSuite): #pylint: disable=too-many-ancestors
     """
     Building an image for a renaissance benchmark requires all libraries for the group this benchmark belongs to
     and a harness project compiled with the same scala version as the benchmark.
@@ -414,10 +419,15 @@ class RenaissanceNativeImageBenchmarkSuite(mx_graal_benchmark.RenaissanceBenchma
         vm_args = self.vmArgs(bmSuiteArgs)
 
         agent_args = _RENAISSANCE_EXTRA_AGENT_ARGS + ['-Dnative-image.benchmark.extra-agent-run-arg=' + bench_arg]
-        pgo_args = RENAISSANCE_EXTRA_PROFILE_ARGS + ['-Dnative-image.benchmark.extra-profile-run-arg=' + bench_arg]
+        pgo_args = RENAISSANCE_EXTRA_PROFILE_ARGS + ['-Dnative-image.benchmark.extra-profile-run-arg=' + bench_arg, '-Dnative-image.benchmark.extra-agent-profile-run-arg=' + bench_arg]
         benchmark_name = '-Dnative-image.benchmark.benchmark-name=' + bench_arg
 
         return agent_args + pgo_args + [benchmark_name] + ['-cp', self.create_classpath(bench_arg)] + vm_args + ['-jar', self.renaissancePath()] + run_args + [bench_arg]
+
+    def successPatterns(self):
+        return super(RenaissanceNativeImageBenchmarkSuite, self).successPatterns() + [
+            _successful_stage_pattern
+        ]
 
     def create_classpath(self, benchArg):
         harness_project = RenaissanceNativeImageBenchmarkSuite.RenaissanceProject('harness', benchmark_scalaversion(benchArg), self)
@@ -518,6 +528,16 @@ class BaseDaCapoNativeImageBenchmarkSuite():
                 dacapo_nested_resources += self.collect_nested_dependencies(dacapo_dat_resource)
         return dacapo_extracted, dacapo_dat_resources, dacapo_nested_resources
 
+    def collect_unique_dependencies(self, path, benchmark, exclude_libs):
+        deps = BaseDaCapoNativeImageBenchmarkSuite.collect_dependencies(path)
+        # if there are more versions of the same jar, we choose one and omit remaining from the classpath
+        if benchmark in exclude_libs:
+            for lib in exclude_libs[benchmark]:
+                lib_path = mx.join(path, lib)
+                if lib_path in deps:
+                    deps.remove(mx.join(path, lib))
+        return deps
+
 
 _DACAPO_EXTRA_VM_ARGS = {
     'avrora':     ['-Dnative-image.benchmark.extra-image-build-argument=--initialize-at-build-time=org.apache.derby.jdbc.ClientDriver,'
@@ -543,8 +563,12 @@ _DACAPO_EXTRA_AGENT_ARGS = [
 ]
 
 _DACAPO_EXTRA_PROFILE_ARGS = [
+    # extra-profile-run-arg is used to pass a number of instrumentation image run iterations
     '-Dnative-image.benchmark.extra-profile-run-arg=-n',
-    '-Dnative-image.benchmark.extra-profile-run-arg=5'
+    '-Dnative-image.benchmark.extra-profile-run-arg=1',
+    # extra-agent-profile-run-arg is used to pass a number of agent runs to provide profiles
+    '-Dnative-image.benchmark.extra-agent-profile-run-arg=-n',
+    '-Dnative-image.benchmark.extra-agent-profile-run-arg=5'
 ]
 
 '''
@@ -588,7 +612,11 @@ _daCapo_iterations = {
     'xalan'      : 30, # Needs both xalan.jar and xalan-2.7.2.jar. Different library versions on classpath aren't supported.
 }
 
-class DaCapoNativeImageBenchmarkSuite(mx_graal_benchmark.DaCapoBenchmarkSuite, BaseDaCapoNativeImageBenchmarkSuite): #pylint: disable=too-many-ancestors
+_daCapo_exclude_lib = {
+    'h2'          : ['derbytools.jar', 'derbyclient.jar', 'derbynet.jar']  # multiple derby classes occurrences on the classpath can cause a security error
+}
+
+class DaCapoNativeImageBenchmarkSuite(mx_java_benchmarks.DaCapoBenchmarkSuite, BaseDaCapoNativeImageBenchmarkSuite): #pylint: disable=too-many-ancestors
     def name(self):
         return 'dacapo-native-image'
 
@@ -627,7 +655,7 @@ class DaCapoNativeImageBenchmarkSuite(mx_graal_benchmark.DaCapoBenchmarkSuite, B
         else:
             bench_arg = benchmarks[0]
         agent_args = ['-Dnative-image.benchmark.extra-agent-run-arg=' + bench_arg] + _DACAPO_EXTRA_AGENT_ARGS
-        pgo_args = ['-Dnative-image.benchmark.extra-profile-run-arg=' + bench_arg] + _DACAPO_EXTRA_PROFILE_ARGS
+        pgo_args = ['-Dnative-image.benchmark.extra-profile-run-arg=' + bench_arg, '-Dnative-image.benchmark.extra-agent-profile-run-arg=' + bench_arg] + _DACAPO_EXTRA_PROFILE_ARGS
         benchmark_name = '-Dnative-image.benchmark.benchmark-name=' + bench_arg
 
         run_args = self.postprocessRunArgs(bench_arg, self.runArgs(bmSuiteArgs))
@@ -636,9 +664,14 @@ class DaCapoNativeImageBenchmarkSuite(mx_graal_benchmark.DaCapoBenchmarkSuite, B
 
     def create_classpath(self, benchmark):
         dacapo_extracted, dacapo_dat_resources, dacapo_nested_resources = self.create_dacapo_classpath(self.daCapoPath(), benchmark)
-        dacapo_jars = self.collect_dependencies(os.path.join(dacapo_extracted, 'jar'))
+        dacapo_jars = super(DaCapoNativeImageBenchmarkSuite, self).collect_unique_dependencies(os.path.join(dacapo_extracted, 'jar'), benchmark, _daCapo_exclude_lib)
         cp = ':'.join([dacapo_extracted] + dacapo_jars + dacapo_dat_resources + dacapo_nested_resources)
         return cp
+
+    def successPatterns(self):
+        return super(DaCapoNativeImageBenchmarkSuite, self).successPatterns() + [
+            _successful_stage_pattern
+        ]
 
 
 mx_benchmark.add_bm_suite(DaCapoNativeImageBenchmarkSuite())
@@ -682,7 +715,8 @@ _SCALA_DACAPO_EXTRA_VM_ARGS = {
                        '-Dnative-image.benchmark.extra-image-build-argument=--initialize-at-build-time=org.eclipse.mylyn.wikitext.core.parser.builder.HtmlDocumentBuilder$ElementInfo',
                        '-Dnative-image.benchmark.extra-image-build-argument=--initialize-at-build-time=org.eclipse.mylyn.wikitext.core.parser.DocumentBuilder$SpanType',
                        '-Dnative-image.benchmark.extra-image-build-argument=--initialize-at-build-time=org.eclipse.mylyn.wikitext.core.parser.DocumentBuilder',
-                       '-Dnative-image.benchmark.extra-image-build-argument=--initialize-at-build-time=org.eclipse.mylyn.wikitext.core.parser.ImageAttributes$Align']
+                       '-Dnative-image.benchmark.extra-image-build-argument=--initialize-at-build-time=org.eclipse.mylyn.wikitext.core.parser.ImageAttributes$Align'],
+    'tmt'           : ['-Dnative-image.benchmark.extra-image-build-argument=--allow-incomplete-classpath']
 }
 
 _scala_daCapo_exclude_lib = {
@@ -695,7 +729,7 @@ _scala_daCapo_exclude_lib = {
 }
 
 
-class ScalaDaCapoNativeImageBenchmarkSuite(mx_graal_benchmark.ScalaDaCapoBenchmarkSuite, BaseDaCapoNativeImageBenchmarkSuite): #pylint: disable=too-many-ancestors
+class ScalaDaCapoNativeImageBenchmarkSuite(mx_java_benchmarks.ScalaDaCapoBenchmarkSuite, BaseDaCapoNativeImageBenchmarkSuite): #pylint: disable=too-many-ancestors
     def name(self):
         return 'scala-dacapo-native-image'
 
@@ -729,7 +763,7 @@ class ScalaDaCapoNativeImageBenchmarkSuite(mx_graal_benchmark.ScalaDaCapoBenchma
         else:
             bench_arg = benchmarks[0]
         agent_args = ['-Dnative-image.benchmark.extra-agent-run-arg=' + bench_arg] + _DACAPO_EXTRA_AGENT_ARGS
-        pgo_args = ['-Dnative-image.benchmark.extra-profile-run-arg=' + bench_arg] + _DACAPO_EXTRA_PROFILE_ARGS
+        pgo_args = ['-Dnative-image.benchmark.extra-profile-run-arg=' + bench_arg, '-Dnative-image.benchmark.extra-agent-profile-run-arg=' + bench_arg] + _DACAPO_EXTRA_PROFILE_ARGS
         benchmark_name = '-Dnative-image.benchmark.benchmark-name=' + bench_arg
 
         run_args = self.postprocessRunArgs(bench_arg, self.runArgs(bmSuiteArgs))
@@ -738,27 +772,27 @@ class ScalaDaCapoNativeImageBenchmarkSuite(mx_graal_benchmark.ScalaDaCapoBenchma
 
     def create_classpath(self, benchmark):
         dacapo_extracted, dacapo_dat_resources, dacapo_nested_resources = self.create_dacapo_classpath(self.daCapoPath(), benchmark)
-        dacapo_jars = self.collect_unique_dependencies(os.path.join(dacapo_extracted, 'jar'), benchmark)
+        dacapo_jars = super(ScalaDaCapoNativeImageBenchmarkSuite, self).collect_unique_dependencies(os.path.join(dacapo_extracted, 'jar'), benchmark, _scala_daCapo_exclude_lib)
         cp = ':'.join([self.substitution_path()] + [dacapo_extracted] + dacapo_jars + dacapo_dat_resources + dacapo_nested_resources)
         if benchmark == 'scalaxb':
             cp += ':' + self.daCapoAdditionalLib()
         return cp
 
+
+    def successPatterns(self):
+        return super(ScalaDaCapoNativeImageBenchmarkSuite, self).successPatterns() + [
+            _successful_stage_pattern
+        ]
+
+
     @staticmethod
     def substitution_path():
-        bench_suite = mx.suite('nativeimage-benchmarks')
-        root_dir = mx.join(bench_suite.dir, "mxbuild")
-        return os.path.abspath(mx.join(root_dir, 'java/com.oracle.svm.bench.scaladacapo/bin/'))
-
-    def collect_unique_dependencies(self, path, benchmark):
-        deps = super(ScalaDaCapoNativeImageBenchmarkSuite, self).collect_dependencies(path)
-        # if there are more versions of the same jar, we choose one and omit remaining from the classpath
-        if benchmark in _scala_daCapo_exclude_lib:
-            for lib in _scala_daCapo_exclude_lib[benchmark]:
-                lib_path = mx.join(path, lib)
-                if lib_path in deps:
-                    deps.remove(mx.join(path, lib))
-        return deps
+        bench_suite = mx.suite('substratevm')
+        root_dir = mx.join(bench_suite.dir, 'mxbuild')
+        path = os.path.abspath(mx.join(root_dir, 'src', 'com.oracle.svm.bench', 'bin'))
+        if not mx.exists(path):
+            mx.abort('Path to substitutions for scala dacapo not present: ' + path + '. Did you build all of substratevm?')
+        return path
 
 
 mx_benchmark.add_bm_suite(ScalaDaCapoNativeImageBenchmarkSuite())

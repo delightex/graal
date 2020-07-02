@@ -1,7 +1,7 @@
 #
 # ----------------------------------------------------------------------------------------------------
 #
-# Copyright (c) 2018, 2019, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2018, 2020, Oracle and/or its affiliates. All rights reserved.
 # DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 #
 # This code is free software; you can redistribute it and/or modify it
@@ -430,7 +430,7 @@ class UnitTestRun:
                     extra_args = ['--verbose', '--enable-timing']
                 else:
                     extra_args = []
-                if 'coverage' not in Task.tags:
+                if Task.tags is None or 'coverage' not in Task.tags:
                     # If this is a coverage execution, we want maximal coverage
                     # and thus must not fail fast.
                     extra_args += ['--fail-fast']
@@ -486,7 +486,7 @@ def _gate_java_benchmark(args, successRe):
         if jvmErrorFile:
             jvmErrorFile = jvmErrorFile.group()
             mx.log('Dumping ' + jvmErrorFile)
-            with open(jvmErrorFile, 'rb') as fp:
+            with open(jvmErrorFile) as fp:
                 mx.log(fp.read())
             os.unlink(jvmErrorFile)
 
@@ -1070,13 +1070,13 @@ def java_base_unittest(args):
             extra_args = ['--verbose', '--enable-timing']
         else:
             extra_args = []
-        mx_unittest.unittest(['--suite', 'compiler', '--fail-fast'] + extra_args + args)
+        # the base JDK doesn't include jdwp
+        if _graaljdk_override.debug_args:
+            mx.warn('Ignoring Java debugger arguments because base JDK doesn\'t include jdwp')
+        with mx.DisableJavaDebugging():
+            mx_unittest.unittest(['--suite', 'compiler', '--fail-fast'] + extra_args + args)
     finally:
         _graaljdk_override = None
-
-def microbench(*args):
-    mx.abort("`mx microbench` is deprecated.\n" +
-             "Use `mx benchmark jmh-whitebox:*` and `mx benchmark jmh-dist:*` instead!")
 
 def javadoc(args):
     # metadata package was deprecated, exclude it
@@ -1396,20 +1396,11 @@ def _graal_config():
     return __graal_config
 
 def _jvmci_jars():
-    if not isJDK8 and _is_jaotc_supported():
-        return [
-            'compiler:GRAAL',
-            'compiler:GRAAL_MANAGEMENT',
-            'compiler:GRAAL_TRUFFLE_JFR_IMPL',
-            'compiler:JAOTC',
-        ]
-    else:
-        # JAOTC is JDK 9+
-        return [
-            'compiler:GRAAL',
-            'compiler:GRAAL_MANAGEMENT',
-            'compiler:GRAAL_TRUFFLE_JFR_IMPL',
-        ]
+    return [
+        'compiler:GRAAL',
+        'compiler:GRAAL_MANAGEMENT',
+        'compiler:GRAAL_TRUFFLE_JFR_IMPL',
+    ] + (['compiler:JAOTC'] if not isJDK8 and _is_jaotc_supported() else [])
 
 # The community compiler component
 mx_sdk_vm.register_graalvm_component(mx_sdk_vm.GraalVmJvmciComponent(
@@ -1438,7 +1429,6 @@ mx.update_commands(_suite, {
     'java_base_unittest' : [java_base_unittest, 'Runs unittest on JDK java.base "only" module(s)'],
     'updategraalinopenjdk' : [updategraalinopenjdk, '[options]'],
     'renamegraalpackages' : [renamegraalpackages, '[options]'],
-    'microbench': [microbench, ''],
     'javadoc': [javadoc, ''],
     'makegraaljdk': [makegraaljdk_cli, '[options]'],
 })

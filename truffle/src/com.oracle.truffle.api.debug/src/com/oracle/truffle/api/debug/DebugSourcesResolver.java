@@ -57,6 +57,7 @@ import com.oracle.truffle.api.TruffleFile;
 import com.oracle.truffle.api.instrumentation.InstrumentableNode;
 import com.oracle.truffle.api.instrumentation.TruffleInstrument.Env;
 import com.oracle.truffle.api.nodes.Node;
+import com.oracle.truffle.api.nodes.RootNode;
 import com.oracle.truffle.api.source.Source;
 import com.oracle.truffle.api.source.SourceSection;
 
@@ -155,9 +156,9 @@ final class DebugSourcesResolver {
             try {
                 if (builder == null) {
                     String name = uri.getPath() != null ? uri.getPath() : uri.getSchemeSpecificPart();
-                    builder = Source.newBuilder(source.getLanguage(), new InputStreamReader(stream), name).uri(uri).mimeType(source.getMimeType());
+                    builder = Source.newBuilder(source.getLanguage(), new InputStreamReader(stream), name).uri(uri);
                 }
-                return builder.cached(false).interactive(source.isInteractive()).internal(source.isInternal()).build();
+                return builder.cached(false).interactive(source.isInteractive()).internal(source.isInternal()).mimeType(source.getMimeType()).build();
             } catch (IOException ex) {
                 return null;
             }
@@ -253,6 +254,7 @@ final class DebugSourcesResolver {
             }
             n = n.getParent();
         }
-        return node.getRootNode().getSourceSection();
+        final RootNode rootNode = node.getRootNode();
+        return rootNode != null ? rootNode.getSourceSection() : null;
     }
 }

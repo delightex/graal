@@ -48,6 +48,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Optional;
+import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -62,7 +63,6 @@ import java.util.stream.Collectors;
 
 import org.graalvm.compiler.api.replacements.SnippetReflectionProvider;
 import org.graalvm.compiler.nodes.ConstantNode;
-import org.graalvm.compiler.nodes.StructuredGraph;
 import org.graalvm.compiler.nodes.ValueNode;
 import org.graalvm.compiler.nodes.graphbuilderconf.GraphBuilderConfiguration;
 import org.graalvm.compiler.nodes.graphbuilderconf.GraphBuilderContext;
@@ -74,6 +74,7 @@ import org.graalvm.compiler.nodes.spi.Replacements;
 import org.graalvm.compiler.options.Option;
 import org.graalvm.compiler.options.OptionKey;
 import org.graalvm.compiler.phases.util.Providers;
+import org.graalvm.compiler.truffle.common.CompilableTruffleAST;
 import org.graalvm.compiler.truffle.common.OptimizedAssumptionDependency;
 import org.graalvm.compiler.truffle.compiler.PartialEvaluator;
 import org.graalvm.compiler.truffle.compiler.SharedTruffleCompilerOptions;
@@ -99,6 +100,7 @@ import com.oracle.svm.core.annotate.Alias;
 import com.oracle.svm.core.annotate.Delete;
 import com.oracle.svm.core.annotate.RecomputeFieldValue;
 import com.oracle.svm.core.annotate.RecomputeFieldValue.Kind;
+import com.oracle.svm.core.annotate.Substitute;
 import com.oracle.svm.core.annotate.TargetClass;
 import com.oracle.svm.core.annotate.Uninterruptible;
 import com.oracle.svm.core.deopt.Deoptimizer;
@@ -118,9 +120,10 @@ import com.oracle.svm.graal.hosted.GraalFeature.RuntimeBytecodeParser;
 import com.oracle.svm.hosted.FeatureImpl.BeforeAnalysisAccessImpl;
 import com.oracle.svm.hosted.FeatureImpl.BeforeCompilationAccessImpl;
 import com.oracle.svm.hosted.FeatureImpl.DuringAnalysisAccessImpl;
-import com.oracle.svm.hosted.code.InliningUtilities;
+import com.oracle.svm.hosted.SVMHost;
 import com.oracle.svm.hosted.meta.HostedType;
 import com.oracle.svm.hosted.option.RuntimeOptionFeature;
+import com.oracle.svm.hosted.snippets.SubstrateGraphBuilderPlugins;
 import com.oracle.svm.truffle.api.SubstrateOptimizedCallTarget;
 import com.oracle.svm.truffle.api.SubstratePartialEvaluator;
 import com.oracle.svm.truffle.api.SubstrateTruffleCompiler;
@@ -141,7 +144,6 @@ import com.oracle.truffle.api.library.GenerateLibrary;
 import com.oracle.truffle.api.nodes.ExplodeLoop;
 import com.oracle.truffle.api.nodes.RootNode;
 import com.oracle.truffle.api.profiles.Profile;
-import java.util.ServiceLoader;
 
 import jdk.vm.ci.code.Architecture;
 import jdk.vm.ci.meta.JavaConstant;
@@ -241,7 +243,16 @@ public final class TruffleFeature implements com.oracle.svm.core.graal.GraalFeat
         }
 
         public BackgroundCompileQueue createBackgroundCompileQueue(@SuppressWarnings("unused") SubstrateTruffleRuntime runtime) {
-            return new BackgroundCompileQueue();
+            return new BackgroundCompileQueue(runtime);
+        }
+
+        public CompilableTruffleAST asCompilableTruffleAST(JavaConstant constant) {
+            return (CompilableTruffleAST) KnownIntrinsics.convertUnknownValue(SubstrateObjectConstant.asObject(OptimizedCallTarget.class, constant), Object.class);
+        }
+
+        @SuppressWarnings("unused")
+        public boolean tryLog(SubstrateTruffleRuntime runtime, CompilableTruffleAST compilable, String message) {
+            return false;
         }
     }
 
@@ -329,6 +340,9 @@ public final class TruffleFeature implements com.oracle.svm.core.graal.GraalFeat
             RuntimeClassInitialization.initializeAtBuildTime(provider.getClass());
         }
         initializeTruffleReflectively(Thread.currentThread().getContextClassLoader());
+
+        // reinitialize language cache
+        invokeStaticMethod("com.oracle.truffle.api.library.LibraryFactory", "reinitializeNativeImageState", Collections.emptyList());
     }
 
     @Override
@@ -369,6 +383,16 @@ public final class TruffleFeature implements com.oracle.svm.core.graal.GraalFeat
                 return true;
             }
         });
+
+        if (analysis || hosted) {
+            /*
+             * For AOT compilation and static analysis, we intrinsify CompilerDirectives.castExact
+             * with explicit exception edges. For runtime compilation, TruffleGraphBuilderPlugins
+             * registers a plugin that uses deoptimization.
+             */
+            r = new Registration(invocationPlugins, CompilerDirectives.class);
+            SubstrateGraphBuilderPlugins.registerCastExact(r);
+        }
     }
 
     private void registerNeverPartOfCompilation(InvocationPlugins plugins) {
@@ -435,8 +459,8 @@ public final class TruffleFeature implements com.oracle.svm.core.graal.GraalFeat
 
             if (Options.TruffleInlineDuringParsing.getValue()) {
                 graphBuilderConfig.getPlugins().appendInlineInvokePlugin(
-                                new TruffleParsingInlineInvokePlugin(graalFeature.getHostedProviders().getReplacements(), graphBuilderConfig.getPlugins().getInvocationPlugins(), partialEvaluator,
-                                                method -> includeCallee(method, null, null)));
+                                new TruffleParsingInlineInvokePlugin(config.getHostVM(), graalFeature.getHostedProviders().getReplacements(), graphBuilderConfig.getPlugins().getInvocationPlugins(),
+                                                partialEvaluator, method -> includeCallee(method, null, null)));
             }
 
             registerNeverPartOfCompilation(graphBuilderConfig.getPlugins().getInvocationPlugins());
@@ -453,7 +477,8 @@ public final class TruffleFeature implements com.oracle.svm.core.graal.GraalFeat
                             partialEvaluator.getProviders().getStampProvider(),
                             snippetReflection,
                             graalFeature.getHostedProviders().getWordTypes(),
-                            graalFeature.getHostedProviders().getPlatformConfigurationProvider());
+                            graalFeature.getHostedProviders().getPlatformConfigurationProvider(),
+                            graalFeature.getHostedProviders().getMetaAccessExtensionProvider());
             newHostedProviders.setGraphBuilderPlugins(graphBuilderConfig.getPlugins());
 
             graalFeature.initializeRuntimeCompilationConfiguration(newHostedProviders, graphBuilderConfig, this::includeCallee, this::deoptimizeOnException);
@@ -512,12 +537,15 @@ public final class TruffleFeature implements com.oracle.svm.core.graal.GraalFeat
 
     static class TruffleParsingInlineInvokePlugin implements InlineInvokePlugin {
 
+        private final SVMHost hostVM;
         private final Replacements replacements;
         private final InvocationPlugins invocationPlugins;
         private final PartialEvaluator partialEvaluator;
         private final Predicate<ResolvedJavaMethod> includeMethodPredicate;
 
-        TruffleParsingInlineInvokePlugin(Replacements replacements, InvocationPlugins invocationPlugins, PartialEvaluator partialEvaluator, Predicate<ResolvedJavaMethod> includeMethodPredicate) {
+        TruffleParsingInlineInvokePlugin(SVMHost hostVM, Replacements replacements, InvocationPlugins invocationPlugins, PartialEvaluator partialEvaluator,
+                        Predicate<ResolvedJavaMethod> includeMethodPredicate) {
+            this.hostVM = hostVM;
             this.replacements = replacements;
             this.invocationPlugins = invocationPlugins;
             this.partialEvaluator = partialEvaluator;
@@ -552,8 +580,7 @@ public final class TruffleFeature implements com.oracle.svm.core.graal.GraalFeat
                 }
             }
 
-            StructuredGraph graph = ((AnalysisMethod) original).getTypeFlow().getGraph();
-            if (graph != null && original.getCode() != null && includeMethodPredicate.test(original) && InliningUtilities.isTrivialMethod(graph) &&
+            if (original.getCode() != null && includeMethodPredicate.test(original) && hostVM.isAnalysisTrivialMethod((AnalysisMethod) original) &&
                             builder.getDepth() < InlineDuringParsingMaxDepth.getValue(HostedOptionValues.singleton())) {
                 return createStandardInlineInfo(original);
             }
@@ -614,12 +641,13 @@ public final class TruffleFeature implements com.oracle.svm.core.graal.GraalFeat
     }
 
     private boolean includeCallee(ResolvedJavaMethod implementationMethod, GraalFeature.CallTreeNode calleeNode, List<AnalysisMethod> implementationMethods) {
+        Uninterruptible uninterruptibleAnnotation = implementationMethod.getAnnotation(Uninterruptible.class);
         if (implementationMethod.getAnnotation(CompilerDirectives.TruffleBoundary.class) != null) {
             return false;
         } else if (SubstrateUtil.NativeImageLoadingShield.isNeverInline(implementationMethod)) {
             /* Ensure that NeverInline methods are also never inlined during Truffle compilation. */
             return false;
-        } else if (implementationMethod.getAnnotation(Uninterruptible.class) != null) {
+        } else if (uninterruptibleAnnotation != null && !uninterruptibleAnnotation.mayBeInlined()) {
             /* The semantics of Uninterruptible would get lost during partial evaluation. */
             return false;
         } else if (implementationMethod.getAnnotation(TruffleCallBoundary.class) != null) {
@@ -698,6 +726,7 @@ public final class TruffleFeature implements com.oracle.svm.core.graal.GraalFeat
         blacklistAllMethods(metaAccess, ListIterator.class);
         blacklistAllMethods(metaAccess, ReentrantLock.class);
 
+        whitelistMethod(metaAccess, BigInteger.class, "signum");
         whitelistMethod(metaAccess, ReentrantLock.class, "isLocked");
         whitelistMethod(metaAccess, ReentrantLock.class, "isHeldByCurrentThread");
 
@@ -872,28 +901,16 @@ public final class TruffleFeature implements com.oracle.svm.core.graal.GraalFeat
 @TargetClass(className = "org.graalvm.compiler.truffle.runtime.OptimizedCallTarget", onlyWith = TruffleFeature.IsEnabled.class)
 final class Target_org_graalvm_compiler_truffle_runtime_OptimizedCallTarget {
 
-    /**
-     * Truffle code can run during image generation. Discard the profiling information collected and
-     * start with a fresh profile at run time.
+    /*
+     * Retry compilation when they failed during image generation.
      */
     @Alias @RecomputeFieldValue(kind = Kind.Reset) //
-    int callCount;
-    @Alias @RecomputeFieldValue(kind = Kind.Reset) //
-    int callAndLoopCount;
-    @Alias @RecomputeFieldValue(kind = Kind.Reset) //
     boolean compilationFailed;
+    /*
+     * The initialized time stamp is not useful when collected during image generation.
+     */
     @Alias @RecomputeFieldValue(kind = Kind.Reset) //
     long initializedTimestamp;
-    @Alias @RecomputeFieldValue(kind = Kind.Reset) //
-    Class<?>[] profiledArgumentTypes;
-    @Alias @RecomputeFieldValue(kind = Kind.Reset) //
-    OptimizedAssumption profiledArgumentTypesAssumption;
-    @Alias @RecomputeFieldValue(kind = Kind.Reset) //
-    Class<?> profiledReturnType;
-    @Alias @RecomputeFieldValue(kind = Kind.Reset) //
-    OptimizedAssumption profiledReturnTypeAssumption;
-    @Alias @RecomputeFieldValue(kind = Kind.Reset) //
-    Class<? extends Throwable> profiledExceptionType;
 }
 
 // Checkstyle: stop
@@ -947,4 +964,20 @@ final class Target_com_oracle_truffle_polyglot_LanguageCache {
      */
     @Alias @RecomputeFieldValue(kind = Kind.Reset) //
     private String languageHome;
+}
+
+@TargetClass(className = "com.oracle.truffle.polyglot.HostObject", onlyWith = TruffleFeature.IsEnabled.class)
+final class Target_com_oracle_truffle_polyglot_HostObject {
+
+    /**
+     * TODO: Remove when java.lang.reflect.Array.getLength is made PE-safe (GR-23860).
+     */
+    @Substitute
+    static int getArrayLength(Object array) {
+        if (array == null || !array.getClass().isArray()) {
+            CompilerDirectives.transferToInterpreterAndInvalidate();
+            throw new IllegalStateException("should not reach here");
+        }
+        return KnownIntrinsics.readArrayLength(array);
+    }
 }

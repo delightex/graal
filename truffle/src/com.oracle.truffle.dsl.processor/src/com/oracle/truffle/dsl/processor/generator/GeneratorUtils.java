@@ -66,6 +66,7 @@ import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
 
 import com.oracle.truffle.dsl.processor.ProcessorContext;
+import com.oracle.truffle.dsl.processor.TruffleTypes;
 import com.oracle.truffle.dsl.processor.java.ElementUtils;
 import com.oracle.truffle.dsl.processor.java.model.CodeAnnotationMirror;
 import com.oracle.truffle.dsl.processor.java.model.CodeAnnotationValue;
@@ -89,6 +90,27 @@ public class GeneratorUtils {
         return builder.build();
     }
 
+    public static CodeTree createShouldNotReachHere() {
+        ProcessorContext context = ProcessorContext.getInstance();
+        CodeTreeBuilder builder = CodeTreeBuilder.createBuilder();
+        builder.startThrow().startStaticCall(context.getTypes().CompilerDirectives, "shouldNotReachHere").end().end();
+        return builder.build();
+    }
+
+    public static CodeTree createShouldNotReachHere(String message) {
+        ProcessorContext context = ProcessorContext.getInstance();
+        CodeTreeBuilder builder = CodeTreeBuilder.createBuilder();
+        builder.startThrow().startStaticCall(context.getTypes().CompilerDirectives, "shouldNotReachHere").doubleQuote(message).end().end();
+        return builder.build();
+    }
+
+    public static CodeTree createShouldNotReachHere(CodeTree causeExpression) {
+        ProcessorContext context = ProcessorContext.getInstance();
+        CodeTreeBuilder builder = CodeTreeBuilder.createBuilder();
+        builder.startThrow().startStaticCall(context.getTypes().CompilerDirectives, "shouldNotReachHere").tree(causeExpression).end().end();
+        return builder.build();
+    }
+
     public static CodeTree createTransferToInterpreter() {
         ProcessorContext context = ProcessorContext.getInstance();
         CodeTreeBuilder builder = CodeTreeBuilder.createBuilder();
@@ -100,6 +122,29 @@ public class GeneratorUtils {
         TypeElement superClass = fromTypeMirror(clazz.getSuperclass());
         ExecutableElement constructor = findConstructor(superClass);
         return createConstructorUsingFields(modifiers, clazz, constructor);
+    }
+
+    public static void addBoundaryOrTransferToInterpreter(CodeExecutableElement method, CodeTreeBuilder builder) {
+        if (method != builder.findMethod()) {
+            throw new AssertionError("Expected " + method + " but was " + builder.findMethod());
+        }
+        TruffleTypes types = ProcessorContext.getInstance().getTypes();
+        if (ElementUtils.findAnnotationMirror(method, types.CompilerDirectives_TruffleBoundary) != null) {
+            // already a boundary. nothing to do.
+            return;
+        }
+        boolean hasFrame = false;
+        for (VariableElement var : method.getParameters()) {
+            if (ElementUtils.typeEquals(var.asType(), types.VirtualFrame)) {
+                hasFrame = true;
+                break;
+            }
+        }
+        if (hasFrame) {
+            builder.tree(GeneratorUtils.createTransferToInterpreterAndInvalidate());
+        } else {
+            method.addAnnotationMirror(new CodeAnnotationMirror(types.CompilerDirectives_TruffleBoundary));
+        }
     }
 
     public static void mergeSupressWarnings(CodeElement<?> element, String... addWarnings) {
