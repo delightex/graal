@@ -40,6 +40,18 @@ else
 CLANG_PREFIX=
 endif
 
+ifeq (, $(shell which ${LLVM_CONFIG}))
+$(warning "${LLVM_CONFIG} not found on path.")
+
+${LLVM_REDUCE} ${LLVM_STRESS}:
+	@mkdir -p $(dir $@)
+	@echo "#!/bin/bash" > $@
+	@echo "echo '$(notdir $@) not functional, llvm-config not found at build time. Read FUZZING.md for build instructions.'" >> $@
+	@echo "exit 1" >> $@
+	$(QUIETLY) chmod +x $@
+
+else
+
 LIBS+=$(shell ${LLVM_CONFIG} --libs)
 LDFLAGS+=$(shell ${LLVM_CONFIG} --ldflags) -rpath $(shell ${LLVM_CONFIG} --libdir)
 CXXFLAGS+=$(shell ${LLVM_CONFIG} --cxxflags) -std=c++14
@@ -69,3 +81,7 @@ ${LLVM_REDUCE}: bin/llvm-reduce.o
 ${LLVM_STRESS}: bin/llvm-stress.o
 	@mkdir -p $(dir $@)
 	$(QUIETLY) $(CXX_PREFIX) $(CXX) ${LDFLAGS} ${CXXFLAGS} -o $@ $< $(LIBS)
+
+endif # end no llvm-config
+# disable default rules
+SUFFIXES:
