@@ -789,7 +789,7 @@ def fuzz(args=None, out=None):
     parsed_args = parser.parse_args(args)
 
     tmp_dir = None
-    try:        
+    try:
         tmp_dir = tempfile.mkdtemp()
         tmp_ll = os.path.join(tmp_dir, 'tmp.ll')
         tmp_main_ll = os.path.join(tmp_dir, 'tmp.main.ll')
@@ -822,7 +822,7 @@ def fuzz(args=None, out=None):
                     mx.abort("Environment variable `CSMITH_HEADERS` not set")
                 mx.run([csmith_exe, "-o", tmp_c, "--seed", str(rand.randint(0, 10000000))])
                 mx.run([toolchain_clang, "-O0", "-Wno-everything", "-I" + csmith_headers, "-o", tmp_out, tmp_c])
-                llvm_tool( ["clang", "-O0", "-Wno-everything", "-S", "-emit-llvm", "-I" + csmith_headers, "-o", tmp_ll, tmp_c])
+                llvm_tool(["clang", "-O0", "-Wno-everything", "-S", "-emit-llvm", "-I" + csmith_headers, "-o", tmp_ll, tmp_c])
                 gen.append((tmp_c, 'autogen.c'))
             timeout = 10
             with open(tmp_sulong_out, 'w') as o, open(tmp_sulong_err, 'w') as e:
@@ -838,7 +838,7 @@ def fuzz(args=None, out=None):
                 passed += 1
             else:
                 now = str(datetime.datetime.now())
-                now = now.replace(":","_")
+                now = now.replace(":", "_")
                 current_out_dir = os.path.join(parsed_args.outdir, now + "_" + parsed_args.generator)
                 os.makedirs(current_out_dir)
                 gen += [
@@ -882,8 +882,6 @@ def ll_reduce(args=None, out=None):
         tmp_out = os.path.join(tmp_dir, 'tmp.out')
         tmp_sulong_out_original = os.path.join(tmp_dir, 'tmp_sulong_out_original.txt')
         tmp_sulong_err_original = os.path.join(tmp_dir, 'tmp_sulong_err_original.txt')
-        tmp_sulong_out = os.path.join(tmp_dir, 'tmp_sulong_out.txt')
-        tmp_sulong_err = os.path.join(tmp_dir, 'tmp_sulong_err.txt')
         rand = Random(parsed_args.seed)
         lli_timeout = 10
         devnull = open(os.devnull, 'w')
@@ -947,20 +945,20 @@ def check_interesting(args=None, out=None):
             runLLVM([tmp_out], timeout=10, nonZeroIsFatal=False, out=o, err=e)
         with open(tmp_bin_out, 'w') as o, open(tmp_bin_err, 'w') as e:
             try:
-               mx.run([tmp_out], timeout=10, out=o, err=e)
+                mx.run([tmp_out], timeout=10, out=o, err=e)
             except SystemExit:
-               exit(0)
+                exit(0)
         with open(tmp_bin_out_o3, 'w') as o, open(tmp_bin_err_o3, 'w') as e:
             try:
-               mx.run([tmp_out_o3], timeout=10, out=o, err=e)
+                mx.run([tmp_out_o3], timeout=10, out=o, err=e)
             except SystemExit:
-               exit(0)
+                exit(0)
         if not all(filecmp.cmp(bin_f, bin_f_o3, shallow=False) for bin_f, bin_f_o3 in ((tmp_bin_out, tmp_bin_out_o3), (tmp_bin_err, tmp_bin_err_o3))):
             exit(0)
         if not all(filecmp.cmp(sulong_f, bin_f, shallow=False) for sulong_f, bin_f in ((tmp_sulong_out, tmp_bin_out), (tmp_sulong_err, tmp_bin_err))):
-            for prefix, out, err in ((parsed_args.bin_startswith, tmp_bin_out, tmp_bin_err), (parsed_args.sulong_startswith, tmp_sulong_out, tmp_sulong_err)):
+            for prefix, out_file, err_file in ((parsed_args.bin_startswith, tmp_bin_out, tmp_bin_err), (parsed_args.sulong_startswith, tmp_sulong_out, tmp_sulong_err)):
                 if prefix:
-                    with open(out, 'r') as o, open(err, 'r') as e:
+                    with open(out_file, 'r') as o, open(err_file, 'r') as e:
                         if not any(fl.startswith(prefix) for fl in (next(o, ""), next(e, ""))):
                             exit(0)
             exit(1)
