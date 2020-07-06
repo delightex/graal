@@ -854,9 +854,9 @@ def fuzz(args=None, out=None):
     finally:
         if tmp_dir:
             shutil.rmtree(tmp_dir)
-    print("Test report")
-    print("total testcases: %i seed: %i" % (parsed_args.nrtestcases, parsed_args.seed))
-    print("interesting testcases: %i invalid testcases: %i" % (parsed_args.nrtestcases-invalid-passed, invalid))
+    mx.log("Test report")
+    mx.log("total testcases: {} seed: {}".format(parsed_args.nrtestcases, parsed_args.seed))
+    mx.log("interesting testcases: {} invalid testcases: {}".format(parsed_args.nrtestcases-invalid-passed, invalid))
 
 
 def ll_reduce(args=None, out=None):
@@ -897,7 +897,7 @@ def ll_reduce(args=None, out=None):
         run_lli(tmp_ll, tmp_sulong_out_original, tmp_sulong_err_original)
         while (not parsed_args.timeout or time.time()-starttime < parsed_args.timeout) and \
                  (not starttime_stabilized or time.time()-starttime_stabilized < parsed_args.timeout_stabilized):
-            print("nrmutations: %d filesize: %d bytes" % (nrmutations, os.path.getsize(tmp_ll)))
+            mx.log("nrmutations: {} filesize: {} bytes".format(nrmutations, os.path.getsize(tmp_ll)))
             llvm_tool(["llvm-as", "-o", tmp_bc, tmp_ll])
             mx.run([_get_fuzz_tool("llvm-reduce"), tmp_bc, "-ignore_remaining_args=1", "-mtriple", "x86_64-unknown-linux-gnu", "-nrmutations", str(nrmutations), "-seed", str(rand.randint(0, 10000000)), "-o", tmp_ll_reduced], out=devnull, err=devnull)
             reduced_interesting = subprocess.call(shlex.split(parsed_args.interestingness_test) + [tmp_ll_reduced])
