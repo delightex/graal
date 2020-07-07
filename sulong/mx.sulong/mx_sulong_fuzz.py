@@ -141,10 +141,16 @@ def ll_reduce(args=None, out=None):
     parser.add_argument('input', help='The input file.', metavar='<input>')
     parsed_args = parser.parse_args(args)
 
+    mx.log("Running ll-reduce with the following configuration:")
+    for k, v in vars(parsed_args).items():
+        mx.log("{:>30}: {}".format(k, v))
+
     tmp_dir = None
     nrmutations = 4
     starttime = time.time()
     starttime_stabilized = None
+    tmp_ll = None
+
     try:
         tmp_dir = tempfile.mkdtemp()
         tmp_bc = os.path.join(tmp_dir, 'tmp.bc')
@@ -156,6 +162,13 @@ def ll_reduce(args=None, out=None):
         rand = Random(parsed_args.seed)
         lli_timeout = 10
         devnull = open(os.devnull, 'w')
+
+        def count_lines(file):
+            i = 0
+            with open(file) as f:
+                for i, l in enumerate(f, 1):
+                    pass
+            return i
 
         def run_lli(input_f, out_f, err_f):
             additional_clang_input = [mx_subst.path_substitutions.substitute(ci) for ci in parsed_args.clang_input or []]
@@ -174,23 +187,27 @@ def ll_reduce(args=None, out=None):
         run_lli(tmp_ll, tmp_sulong_out_original, tmp_sulong_err_original)
         while (not parsed_args.timeout or time.time()-starttime < parsed_args.timeout) and \
                  (not starttime_stabilized or time.time()-starttime_stabilized < parsed_args.timeout_stabilized):
-            mx.log("nrmutations: {} filesize: {} bytes".format(nrmutations, os.path.getsize(tmp_ll)))
             mx_sulong.llvm_tool(["llvm-as", "-o", tmp_bc, tmp_ll])
+            mx.log("nrmutations: {} filesize: {} bytes (bc), number of lines {} (ll)".format(nrmutations, os.path.getsize(tmp_bc), count_lines(tmp_ll)))
             mx.run([_get_fuzz_tool("llvm-reduce"), tmp_bc, "-ignore_remaining_args=1", "-mtriple", "x86_64-unknown-linux-gnu", "-nrmutations", str(nrmutations), "-seed", str(rand.randint(0, 10000000)), "-o", tmp_ll_reduced], out=devnull, err=devnull)
             reduced_interesting = subprocess.call(shlex.split(parsed_args.interestingness_test) + [tmp_ll_reduced])
             if reduced_interesting:
-                tmp_ll, tmp_ll_reduced = tmp_ll_reduced, tmp_ll
-                nrmutations *= 2
-                starttime_stabilized = None
+                if not filecmp.cmp(tmp_ll, tmp_ll_reduced, shallow=False):
+                    tmp_ll, tmp_ll_reduced = tmp_ll_reduced, tmp_ll
+                    nrmutations *= 2
+                    starttime_stabilized = None
+                    continue
+                mx.log("Reduced file is identical to input file!")
+            if nrmutations > 1:
+                nrmutations //= 2
             else:
-                if nrmutations > 1:
-                    nrmutations //= 2
-                else:
-                    if not starttime_stabilized:
-                        starttime_stabilized = time.time()
+                if not starttime_stabilized:
+                    starttime_stabilized = time.time()
     finally:
         if tmp_ll and os.path.isfile(tmp_ll):
-            shutil.copy(tmp_ll, parsed_args.output or (os.path.splitext(parsed_args.input)[0] + ".reduced.ll"))
+            result = parsed_args.output or (os.path.splitext(parsed_args.input)[0] + ".reduced.ll")
+            mx.log("Writing reduced ll file to {}".format(result))
+            shutil.copy(tmp_ll, result)
         if tmp_dir:
             shutil.rmtree(tmp_dir)
 
