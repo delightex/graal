@@ -89,7 +89,8 @@ suite = {
     },
     "LLVM_ORG" : {
       "version" : "9.0.0-5-g80b1d876fd-bgb66b241662",
-      "host" : "https://lafo.ssw.uni-linz.ac.at/pub/llvm-org",
+      # "host" : "https://lafo.ssw.uni-linz.ac.at/pub/llvm-org",
+      "host" : "https://graal.us.oracle.com/slavefiles2/llvm-org-staging",
       "os_arch" : {
         "linux" : {
           "amd64" : {
@@ -117,7 +118,8 @@ suite = {
     },
     "LLVM_ORG_COMPILER_RT_LINUX" : {
       "version" : "9.0.0-5-g80b1d876fd-bgb66b241662",
-      "host" : "https://lafo.ssw.uni-linz.ac.at/pub/llvm-org",
+      # "host" : "https://lafo.ssw.uni-linz.ac.at/pub/llvm-org",
+      "host" : "https://graal.us.oracle.com/slavefiles2/llvm-org-staging",
       # we really want linux-amd64, also on non-linux and non-amd64 platforms for cross-compilation
       "urls" : ["{host}/compiler-rt-llvmorg-{version}-linux-amd64.tar.gz"],
       "sha1" : "0fde45454791eff6b1cd1dbed21645ebe073c0d2",
@@ -126,7 +128,8 @@ suite = {
     "LLVM_ORG_SRC" : {
       # version difference since the sources where repackaged
       "version" : "9.0.0-5-g80b1d876fd-bg0c808efbe5",
-      "host" : "https://lafo.ssw.uni-linz.ac.at/pub/llvm-org",
+      # "host" : "https://lafo.ssw.uni-linz.ac.at/pub/llvm-org",
+      "host" : "https://graal.us.oracle.com/slavefiles2/llvm-org-staging",
       "packedResource" : True,
       "urls" : ["{host}/llvm-src-llvmorg-{version}.tar.gz"],
       "sha1" : "27bea70346768ee43893df3f65cf785c5b5d0342",
