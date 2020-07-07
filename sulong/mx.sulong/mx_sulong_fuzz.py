@@ -203,6 +203,22 @@ def check_interesting(args=None, out=None):
     parser.add_argument('--sulong-startswith', help='Prefix the output of interesting testprograms has to start with when executed on Sulong.', metavar='<teststartswith>', default=None)
     parsed_args = parser.parse_args(args)
 
+    def _not_interesting(msg=None):
+        if msg:
+            mx.logv("mx check-interesting: " + msg)
+        exit(0)
+
+    def _interesting(msg=None):
+        if msg:
+            mx.logv("mx check-interesting: " + msg)
+        exit(1)
+
+    def _files_match_pattern(prefix, out_file, err_file):
+        with open(out_file, 'r') as o, open(err_file, 'r') as e:
+            if not any(fl.startswith(prefix) for fl in (next(o, ""), next(e, ""))):
+                return False
+        return True
+
     tmp_dir = None
     try:
         tmp_dir = tempfile.mkdtemp()
@@ -219,28 +235,28 @@ def check_interesting(args=None, out=None):
             mx.run([toolchain_clang, "-O0", "-Wno-everything", "-o", tmp_out, parsed_args.input])
             mx.run([toolchain_clang, "-O3", "-Wno-everything", "-o", tmp_out_o3, parsed_args.input])
         except SystemExit:
-            exit(0)
+            _not_interesting("Compiling the input file failed!")
         with open(tmp_sulong_out, 'w') as o, open(tmp_sulong_err, 'w') as e:
             mx_sulong.runLLVM([tmp_out], timeout=10, nonZeroIsFatal=False, out=o, err=e)
         with open(tmp_bin_out, 'w') as o, open(tmp_bin_err, 'w') as e:
             try:
                 mx.run([tmp_out], timeout=10, out=o, err=e)
             except SystemExit:
-                exit(0)
+                _not_interesting("Running the O0 compiled input files natively failed!")
         with open(tmp_bin_out_o3, 'w') as o, open(tmp_bin_err_o3, 'w') as e:
             try:
                 mx.run([tmp_out_o3], timeout=10, out=o, err=e)
             except SystemExit:
-                exit(0)
+                _not_interesting("Running the O3 compiled input files natively failed!")
         if not all(filecmp.cmp(bin_f, bin_f_o3, shallow=False) for bin_f, bin_f_o3 in ((tmp_bin_out, tmp_bin_out_o3), (tmp_bin_err, tmp_bin_err_o3))):
-            exit(0)
-        if not all(filecmp.cmp(sulong_f, bin_f, shallow=False) for sulong_f, bin_f in ((tmp_sulong_out, tmp_bin_out), (tmp_sulong_err, tmp_bin_err))):
-            for prefix, out_file, err_file in ((parsed_args.bin_startswith, tmp_bin_out, tmp_bin_err), (parsed_args.sulong_startswith, tmp_sulong_out, tmp_sulong_err)):
-                if prefix:
-                    with open(out_file, 'r') as o, open(err_file, 'r') as e:
-                        if not any(fl.startswith(prefix) for fl in (next(o, ""), next(e, ""))):
-                            exit(0)
-            exit(1)
+            _not_interesting("The result of O0 and O3 is different!")
+        if all(filecmp.cmp(sulong_f, bin_f, shallow=False) for sulong_f, bin_f in ((tmp_sulong_out, tmp_bin_out), (tmp_sulong_err, tmp_bin_err))):
+            _not_interesting("The result of native and sulong is the same!")
+        if parsed_args.bin_startswith and not _files_match_pattern(parsed_args.bin_startswith, tmp_bin_out, tmp_bin_err):
+            _not_interesting("The native result does not match the pattern")
+        if parsed_args.sulong_startswith and not _files_match_pattern(parsed_args.sulong_startswith, tmp_sulong_out, tmp_sulong_err):
+            _not_interesting("The sulong result does not match the pattern")
+        _interesting()
     finally:
         if tmp_dir:
             shutil.rmtree(tmp_dir)
