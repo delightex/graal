@@ -88,24 +88,24 @@ suite = {
       "license" : "BSD-new"
     },
     "LLVM_ORG" : {
-      "version" : "9.0.0-5-g80b1d876fd-bgb66b241662",
+      "version" : "9.0.0-5-g80b1d876fd-bg2fee1d9e32",
       # "host" : "https://lafo.ssw.uni-linz.ac.at/pub/llvm-org",
       "host" : "https://graal.us.oracle.com/slavefiles2/llvm-org-staging",
       "os_arch" : {
         "linux" : {
           "amd64" : {
             "urls" : ["{host}/llvm-llvmorg-{version}-linux-amd64.tar.gz"],
-            "sha1" : "7fd347a6ebe38b02b7cfe1a9e4352e297962a4fc",
+            "sha1" : "31a3c359f34fb9cfb8204269a60330523176f443",
           },
           "aarch64" : {
             "urls" : ["{host}/llvm-llvmorg-{version}-linux-aarch64.tar.gz"],
-            "sha1" : "8061112dd5cf95ed5e43128199fd2d2959bd9fbf",
+            "sha1" : "419d50541acc387f768a2f0b8c0affc62e93f3f8",
           }
         },
         "darwin" : {
           "amd64" : {
             "urls" : ["{host}/llvm-llvmorg-{version}-darwin-amd64.tar.gz"],
-            "sha1" : "a863230a50eddeef4a808742ddb987475c61fd10",
+            "sha1" : "7a3e1c3454009e1a03f6f7fe175b83953c512c37",
           }
         },
         "<others>": {
@@ -117,22 +117,22 @@ suite = {
       }
     },
     "LLVM_ORG_COMPILER_RT_LINUX" : {
-      "version" : "9.0.0-5-g80b1d876fd-bgb66b241662",
+      "version" : "9.0.0-5-g80b1d876fd-bg2fee1d9e32",
       # "host" : "https://lafo.ssw.uni-linz.ac.at/pub/llvm-org",
       "host" : "https://graal.us.oracle.com/slavefiles2/llvm-org-staging",
       # we really want linux-amd64, also on non-linux and non-amd64 platforms for cross-compilation
       "urls" : ["{host}/compiler-rt-llvmorg-{version}-linux-amd64.tar.gz"],
-      "sha1" : "0fde45454791eff6b1cd1dbed21645ebe073c0d2",
+      "sha1" : "2eae28f8886d02ea8f67a5eebd5cde576fa9518a",
       "license" : "Apache-2.0-LLVM",
     },
     "LLVM_ORG_SRC" : {
       # version difference since the sources where repackaged
-      "version" : "9.0.0-5-g80b1d876fd-bg0c808efbe5",
+      "version" : "9.0.0-5-g80b1d876fd-bg2fee1d9e32",
       # "host" : "https://lafo.ssw.uni-linz.ac.at/pub/llvm-org",
       "host" : "https://graal.us.oracle.com/slavefiles2/llvm-org-staging",
       "packedResource" : True,
       "urls" : ["{host}/llvm-src-llvmorg-{version}.tar.gz"],
-      "sha1" : "27bea70346768ee43893df3f65cf785c5b5d0342",
+      "sha1" : "e1f0d4fd7ec93e8c200113b1139964329e6f0270",
       "license" : "Apache-2.0-LLVM",
       },
   },
