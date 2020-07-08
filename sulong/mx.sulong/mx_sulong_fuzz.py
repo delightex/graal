@@ -318,7 +318,6 @@ def bugpoint(args=None, out=None):
     script_content += compile_command + " $@\n"
 
     with ClosedExecutableTempFile(script_content, prefix="bugpoint-compile-command-", suffix=".sh") as compile_script:
-        print(compile_script)
-        print(script_content)
-        cmd = ['bugpoint', parsed_args.opt_command, '--keep-main', '--compile-custom', '--mlimit=' + str(parsed_args.mlimit), '--compile-command=' + compile_script, parsed_args.input] + remaining_args
-        mx.run(cmd)
+        mx_sulong.llvm_extra_tool(['bugpoint', '--opt-command=' + parsed_args.opt_command, '--keep-main', '--compile-custom',
+                                   '--mlimit=' + str(parsed_args.mlimit), '--compile-command=' + compile_script,
+                                   parsed_args.input] + remaining_args)
