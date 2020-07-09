@@ -223,12 +223,12 @@ def check_interesting(args=None, out=None):
 
     def _not_interesting(msg=None):
         if msg:
-            mx.logv("mx check-interesting: " + msg)
+            mx.logv(mx.colorize("mx check-interesting: no ({})".format(msg), color="blue"))
         exit(0)
 
     def _interesting(msg=None):
         if msg:
-            mx.logv("mx check-interesting: " + msg)
+            mx.logv(mx.colorize("mx check-interesting: yes ({})".format(msg), color="cyan"))
         exit(1)
 
     def _files_match_pattern(prefix, out_file, err_file):
@@ -274,7 +274,7 @@ def check_interesting(args=None, out=None):
             _not_interesting("The native result does not match the pattern")
         if parsed_args.sulong_startswith and not _files_match_pattern(parsed_args.sulong_startswith, tmp_sulong_out, tmp_sulong_err):
             _not_interesting("The sulong result does not match the pattern")
-        _interesting()
+        _interesting("Results are different and match the pattern (if provided)")
     finally:
         if tmp_dir:
             shutil.rmtree(tmp_dir)
