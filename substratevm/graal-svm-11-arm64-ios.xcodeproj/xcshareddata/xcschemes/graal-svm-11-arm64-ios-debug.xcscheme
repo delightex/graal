@@ -62,7 +62,6 @@
    </AnalyzeAction>
    <ArchiveAction
       buildConfiguration = "Debug"
-      customArchiveName = "aaa"
       revealArchiveInOrganizer = "YES">
    </ArchiveAction>
 </Scheme>
