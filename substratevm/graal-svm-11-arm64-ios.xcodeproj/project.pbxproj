@@ -30,7 +30,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		5A7FF98F261CAE7500129BCA /* libgraal-svm-11-arm64-ios.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libgraal-svm-11-arm64-ios.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5A7FF98F261CAE7500129BCA /* graal-svm-11-arm64-ios.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "graal-svm-11-arm64-ios.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5A7FF99D261CAED300129BCA /* foundation.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = foundation.c; path = src/com.oracle.svm.native.darwin/src/foundation.c; sourceTree = "<group>"; };
 		5A7FF9A0261CAEE100129BCA /* JvmFuncs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = JvmFuncs.c; path = src/com.oracle.svm.native.jvm.posix/src/JvmFuncs.c; sourceTree = "<group>"; };
 		5A7FF9A3261CAF0200129BCA /* timeZone.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = timeZone.c; path = src/com.oracle.svm.native.libchelper/src/timeZone.c; sourceTree = "<group>"; };
@@ -70,7 +70,7 @@
 		5A7FF990261CAE7500129BCA /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				5A7FF98F261CAE7500129BCA /* libgraal-svm-11-arm64-ios.a */,
+				5A7FF98F261CAE7500129BCA /* graal-svm-11-arm64-ios.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -85,7 +85,6 @@
 				5A7FF98B261CAE7500129BCA /* Sources */,
 				5A7FF98C261CAE7500129BCA /* Frameworks */,
 				5A7FF98D261CAE7500129BCA /* CopyFiles */,
-				5AF08FBA261CB37C002B6026 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -93,7 +92,7 @@
 			);
 			name = "graal-svm-11-arm64-ios";
 			productName = "graal-svm-arm64-ios";
-			productReference = 5A7FF98F261CAE7500129BCA /* libgraal-svm-11-arm64-ios.a */;
+			productReference = 5A7FF98F261CAE7500129BCA /* graal-svm-11-arm64-ios.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -126,26 +125,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		5AF08FBA261CB37C002B6026 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\ncd $PROJECT_DIR/xcode\nmv libgraal-svm-11-arm64-ios.a graal-svm-11-arm64-ios.a\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		5A7FF98B261CAE7500129BCA /* Sources */ = {
@@ -284,13 +263,14 @@
 				CODE_SIGN_STYLE = Automatic;
 				CONFIGURATION_BUILD_DIR = "$(PROJECT_DIR)/xcode";
 				DEVELOPMENT_TEAM = 6H79QDPRAV;
+				EXECUTABLE_PREFIX = "";
 				HEADER_SEARCH_PATHS = (
 					../sdk/latest_graalvm_home/include/darwin,
 					../sdk/latest_graalvm_home/include,
 				);
 				OBJROOT = "$(PROJECT_DIR)/xcode";
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "$(TARGET_NAME)-d";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -302,13 +282,14 @@
 				CODE_SIGN_STYLE = Automatic;
 				CONFIGURATION_BUILD_DIR = "$(PROJECT_DIR)/xcode";
 				DEVELOPMENT_TEAM = 6H79QDPRAV;
+				EXECUTABLE_PREFIX = "";
 				HEADER_SEARCH_PATHS = (
 					../sdk/latest_graalvm_home/include/darwin,
 					../sdk/latest_graalvm_home/include,
 				);
 				OBJROOT = "$(PROJECT_DIR)/xcode";
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "$(TARGET_NAME)-r";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
