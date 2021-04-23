@@ -368,6 +368,7 @@
 		5AA1B38C2631B558000D6B3D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = x86_64;
 				CODE_SIGN_STYLE = Automatic;
 				CONFIGURATION_BUILD_DIR = "$(PROJECT_DIR)/xcode";
 				DEVELOPMENT_TEAM = 6H79QDPRAV;
@@ -391,6 +392,7 @@
 		5AA1B38D2631B558000D6B3D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = x86_64;
 				CODE_SIGN_STYLE = Automatic;
 				CONFIGURATION_BUILD_DIR = "$(PROJECT_DIR)/xcode";
 				DEVELOPMENT_TEAM = 6H79QDPRAV;
