@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5A3DA626263708290069AF3E /* cpuid.c in Sources */ = {isa = PBXBuildFile; fileRef = 5A3DA625263708290069AF3E /* cpuid.c */; };
 		5A7FF99E261CAED300129BCA /* foundation.c in Sources */ = {isa = PBXBuildFile; fileRef = 5A7FF99D261CAED300129BCA /* foundation.c */; settings = {COMPILER_FLAGS = "-x objective-c"; }; };
 		5A7FF9A1261CAEE100129BCA /* JvmFuncs.c in Sources */ = {isa = PBXBuildFile; fileRef = 5A7FF9A0261CAEE100129BCA /* JvmFuncs.c */; };
 		5A7FF9A8261CAF0200129BCA /* timeZone.c in Sources */ = {isa = PBXBuildFile; fileRef = 5A7FF9A3261CAF0200129BCA /* timeZone.c */; };
@@ -47,6 +48,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		5A3DA625263708290069AF3E /* cpuid.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = cpuid.c; path = src/com.oracle.svm.native.libchelper/src/cpuid.c; sourceTree = "<group>"; };
 		5A7FF98F261CAE7500129BCA /* graal-svm-11-arm64-ios-d.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "graal-svm-11-arm64-ios-d.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5A7FF99D261CAED300129BCA /* foundation.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = foundation.c; path = src/com.oracle.svm.native.darwin/src/foundation.c; sourceTree = "<group>"; };
 		5A7FF9A0261CAEE100129BCA /* JvmFuncs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = JvmFuncs.c; path = src/com.oracle.svm.native.jvm.posix/src/JvmFuncs.c; sourceTree = "<group>"; };
@@ -80,6 +82,7 @@
 		5A7FF986261CAE7500129BCA = {
 			isa = PBXGroup;
 			children = (
+				5A3DA625263708290069AF3E /* cpuid.c */,
 				5AF08FC0261CB42A002B6026 /* JvmFuncsFallbacks.c */,
 				5A7FF9A6261CAF0200129BCA /* codeSynchronization.c */,
 				5A7FF9A5261CAF0200129BCA /* cSunMiscSignal.c */,
@@ -175,6 +178,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5A3DA629263708750069AF3E /* cpuid.c in Sources */,
 				5A7FF9A8261CAF0200129BCA /* timeZone.c in Sources */,
 				5A7FF99E261CAED300129BCA /* foundation.c in Sources */,
 				5A7FF9AC261CAF0200129BCA /* macrosAsFunctions.c in Sources */,
@@ -190,6 +194,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5A3DA626263708290069AF3E /* cpuid.c in Sources */,
 				5AA1B3812631B558000D6B3D /* timeZone.c in Sources */,
 				5AA1B3822631B558000D6B3D /* foundation.c in Sources */,
 				5AA1B3832631B558000D6B3D /* macrosAsFunctions.c in Sources */,
@@ -246,16 +251,18 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
+				GCC_PREPROCESSOR_DEFINITIONS = _MACOSX_;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					src/com.oracle.svm.native.libchelper/include,
+					"../sdk/mxbuild/darwin-amd64/GRAALVM_CE0C781D19_JAVA11/graalvm-ce0c781d19-java11-21.1.0-dev/Contents/Home/include",
+					"../sdk/mxbuild/darwin-amd64/GRAALVM_CE0C781D19_JAVA11/graalvm-ce0c781d19-java11-21.1.0-dev/Contents/Home/include/darwin",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -304,12 +311,18 @@
 				EXECUTABLE_PREFIX = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = _MACOSX_;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					src/com.oracle.svm.native.libchelper/include,
+					"../sdk/mxbuild/darwin-amd64/GRAALVM_CE0C781D19_JAVA11/graalvm-ce0c781d19-java11-21.1.0-dev/Contents/Home/include",
+					"../sdk/mxbuild/darwin-amd64/GRAALVM_CE0C781D19_JAVA11/graalvm-ce0c781d19-java11-21.1.0-dev/Contents/Home/include/darwin",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -325,10 +338,7 @@
 				CONFIGURATION_BUILD_DIR = "$(PROJECT_DIR)/xcode";
 				DEVELOPMENT_TEAM = 6H79QDPRAV;
 				EXECUTABLE_PREFIX = "";
-				HEADER_SEARCH_PATHS = (
-					"../sdk/mxbuild/darwin-amd64/GRAALVM_CE_JAVA11/graalvm-ce-java11-21.1.0-dev/Contents/Home/include/darwin",
-					"../sdk/mxbuild/darwin-amd64/GRAALVM_CE_JAVA11/graalvm-ce-java11-21.1.0-dev/Contents/Home/include",
-				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				MACOSX_DEPLOYMENT_TARGET = "";
 				OBJROOT = "$(PROJECT_DIR)/xcode";
 				OTHER_LDFLAGS = "-ObjC";
@@ -348,10 +358,7 @@
 				CONFIGURATION_BUILD_DIR = "$(PROJECT_DIR)/xcode";
 				DEVELOPMENT_TEAM = 6H79QDPRAV;
 				EXECUTABLE_PREFIX = "";
-				HEADER_SEARCH_PATHS = (
-					"../sdk/mxbuild/darwin-amd64/GRAALVM_CE_JAVA11/graalvm-ce-java11-21.1.0-dev/Contents/Home/include/darwin",
-					"../sdk/mxbuild/darwin-amd64/GRAALVM_CE_JAVA11/graalvm-ce-java11-21.1.0-dev/Contents/Home/include",
-				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				MACOSX_DEPLOYMENT_TARGET = "";
 				OBJROOT = "$(PROJECT_DIR)/xcode";
 				ONLY_ACTIVE_ARCH = YES;
@@ -373,10 +380,7 @@
 				CONFIGURATION_BUILD_DIR = "$(PROJECT_DIR)/xcode";
 				DEVELOPMENT_TEAM = 6H79QDPRAV;
 				EXECUTABLE_PREFIX = "";
-				HEADER_SEARCH_PATHS = (
-					"../sdk/mxbuild/darwin-amd64/GRAALVM_CE_JAVA11/graalvm-ce-java11-21.1.0-dev/Contents/Home/include/darwin",
-					"../sdk/mxbuild/darwin-amd64/GRAALVM_CE_JAVA11/graalvm-ce-java11-21.1.0-dev/Contents/Home/include",
-				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				MACOSX_DEPLOYMENT_TARGET = "";
 				OBJROOT = "$(PROJECT_DIR)/xcode";
 				OTHER_LDFLAGS = "-ObjC";
@@ -397,10 +401,7 @@
 				CONFIGURATION_BUILD_DIR = "$(PROJECT_DIR)/xcode";
 				DEVELOPMENT_TEAM = 6H79QDPRAV;
 				EXECUTABLE_PREFIX = "";
-				HEADER_SEARCH_PATHS = (
-					"../sdk/mxbuild/darwin-amd64/GRAALVM_CE_JAVA11/graalvm-ce-java11-21.1.0-dev/Contents/Home/include/darwin",
-					"../sdk/mxbuild/darwin-amd64/GRAALVM_CE_JAVA11/graalvm-ce-java11-21.1.0-dev/Contents/Home/include",
-				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				MACOSX_DEPLOYMENT_TARGET = "";
 				OBJROOT = "$(PROJECT_DIR)/xcode";
 				ONLY_ACTIVE_ARCH = YES;
