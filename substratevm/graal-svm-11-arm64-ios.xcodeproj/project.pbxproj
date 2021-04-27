@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		5A3DA626263708290069AF3E /* cpuid.c in Sources */ = {isa = PBXBuildFile; fileRef = 5A3DA625263708290069AF3E /* cpuid.c */; };
+		5A3DA63C26382A580069AF3E /* cpuid.c in Sources */ = {isa = PBXBuildFile; fileRef = 5A3DA625263708290069AF3E /* cpuid.c */; };
 		5A7FF99E261CAED300129BCA /* foundation.c in Sources */ = {isa = PBXBuildFile; fileRef = 5A7FF99D261CAED300129BCA /* foundation.c */; settings = {COMPILER_FLAGS = "-x objective-c"; }; };
 		5A7FF9A1261CAEE100129BCA /* JvmFuncs.c in Sources */ = {isa = PBXBuildFile; fileRef = 5A7FF9A0261CAEE100129BCA /* JvmFuncs.c */; };
 		5A7FF9A8261CAF0200129BCA /* timeZone.c in Sources */ = {isa = PBXBuildFile; fileRef = 5A7FF9A3261CAF0200129BCA /* timeZone.c */; };
@@ -178,7 +179,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5A3DA629263708750069AF3E /* cpuid.c in Sources */,
+				5A3DA63C26382A580069AF3E /* cpuid.c in Sources */,
 				5A7FF9A8261CAF0200129BCA /* timeZone.c in Sources */,
 				5A7FF99E261CAED300129BCA /* foundation.c in Sources */,
 				5A7FF9AC261CAF0200129BCA /* macrosAsFunctions.c in Sources */,
