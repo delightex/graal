@@ -14,16 +14,16 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "5A7FF98E261CAE7500129BCA"
-               BuildableName = "graal-svm-11-arm64-ios-r.a"
-               BlueprintName = "graal-svm-11-arm64-ios"
-               ReferencedContainer = "container:graal-svm-11-arm64-ios.xcodeproj">
+               BlueprintIdentifier = "5AA1B37F2631B558000D6B3D"
+               BuildableName = "graal-svm-java-11-x86-64-ios-r.a"
+               BlueprintName = "graal-svm-java-11-x86-64-ios"
+               ReferencedContainer = "container:graal-svm-java-11-ios.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
-      buildConfiguration = "Debug"
+      buildConfiguration = "Release"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
@@ -31,7 +31,7 @@
       </Testables>
    </TestAction>
    <LaunchAction
-      buildConfiguration = "Debug"
+      buildConfiguration = "Release"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
@@ -42,7 +42,7 @@
       allowLocationSimulation = "YES">
    </LaunchAction>
    <ProfileAction
-      buildConfiguration = "Debug"
+      buildConfiguration = "Release"
       shouldUseLaunchSchemeArgsEnv = "YES"
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
@@ -50,18 +50,18 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5A7FF98E261CAE7500129BCA"
-            BuildableName = "graal-svm-11-arm64-ios-r.a"
-            BlueprintName = "graal-svm-11-arm64-ios"
-            ReferencedContainer = "container:graal-svm-11-arm64-ios.xcodeproj">
+            BlueprintIdentifier = "5AA1B37F2631B558000D6B3D"
+            BuildableName = "graal-svm-java-11-x86-64-ios-r.a"
+            BlueprintName = "graal-svm-java-11-x86-64-ios"
+            ReferencedContainer = "container:graal-svm-java-11-ios.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
-      buildConfiguration = "Debug">
+      buildConfiguration = "Release">
    </AnalyzeAction>
    <ArchiveAction
-      buildConfiguration = "Debug"
+      buildConfiguration = "Release"
       revealArchiveInOrganizer = "YES">
    </ArchiveAction>
 </Scheme>
