@@ -60,7 +60,6 @@ import org.graalvm.compiler.nodeinfo.InputType;
 import org.graalvm.compiler.nodeinfo.NodeInfo;
 import org.graalvm.compiler.nodes.ProfileData.BranchProbabilityData;
 import org.graalvm.compiler.nodes.ProfileData.ProfileSource;
-import org.graalvm.compiler.nodes.StructuredGraph.StageFlag;
 import org.graalvm.compiler.nodes.calc.AddNode;
 import org.graalvm.compiler.nodes.calc.CompareNode;
 import org.graalvm.compiler.nodes.calc.ConditionalNode;
@@ -966,7 +965,7 @@ public final class IfNode extends ControlSplitNode implements Simplifiable, LIRL
                 LoopExitNode loopExitNode = graph().add(new LoopExitNode(loopBegin));
                 loopExitNode.setStateAfter(stateAfter);
                 graph().addBeforeFixed(this, loopExitNode);
-                if (graph().isBeforeStage(StageFlag.VALUE_PROXY_REMOVAL) && needsProxy) {
+                if (graph().hasValueProxies() && needsProxy) {
                     value = graph().addOrUnique(new ValueProxyNode(value, loopExitNode));
                 }
             }
@@ -999,7 +998,7 @@ public final class IfNode extends ControlSplitNode implements Simplifiable, LIRL
         //           | Merge +---------+Phi|
         //           +-------+         +---+
         // @formatter:on
-        if (this.graph().isBeforeStage(StageFlag.VALUE_PROXY_REMOVAL)) {
+        if (this.graph().hasValueProxies()) {
             if (trueSuccessor instanceof LoopExitNode && falseSuccessor instanceof LoopExitNode) {
                 assert ((LoopExitNode) trueSuccessor).loopBegin() == ((LoopExitNode) falseSuccessor).loopBegin();
                 /*
@@ -1101,7 +1100,7 @@ public final class IfNode extends ControlSplitNode implements Simplifiable, LIRL
             return true;
         }
 
-        if (graph().isAfterStage(StageFlag.FIXED_READS)) {
+        if (graph().isAfterFixedReadPhase()) {
             if (value instanceof ParameterNode) {
                 // Assume Parameters are always evaluated but only apply this logic to graphs after
                 // inlining. Checking for ParameterNode causes it to apply to graphs which are going
@@ -1132,7 +1131,7 @@ public final class IfNode extends ControlSplitNode implements Simplifiable, LIRL
         if (value != null) {
             return value;
         }
-        if (graph().isBeforeStage(StageFlag.EXPAND_LOGIC)) {
+        if (!graph().isAfterExpandLogic()) {
             /*
              * !isAfterExpandLogic() => Cannot spawn NormalizeCompareNodes after lowering in the
              * ExpandLogicPhase.

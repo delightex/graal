@@ -762,7 +762,7 @@ class BaseGraalVmLayoutDistribution(_with_metaclass(ABCMeta, mx.LayoutDistributi
             for installable_components in installables.values():
                 manifest_str = _gen_gu_manifest(installable_components, _format_properties, bundled=True)
                 main_component = _get_main_component(installable_components)
-                _add(layout, components_dir + main_component.installable_id + '.component', "string:" + manifest_str)
+                _add(layout, components_dir + 'org.graalvm.' + main_component.installable_id + '.component', "string:" + manifest_str)
 
         for _base, _suites in component_suites.items():
             _metadata = self._get_metadata(_suites)
@@ -1188,10 +1188,10 @@ class NativePropertiesBuildTask(mx.ProjectBuildTask):
             component_dir = _get_component_type_base(component, apply_substitutions=True)
             dir_name = component.dir_name
             if dir_name:
-                component_dir = component_dir + dir_name + '/'
+                component_dir = component_dir + dir_name + os.sep
             component_dir_rel = relpath(component_dir, start)
-            if not component_dir_rel.endswith('/'):
-                component_dir_rel += '/'
+            if not component_dir_rel.endswith(os.sep):
+                component_dir_rel += os.sep
             location_classpath.append(component_dir_rel + '*')
         return location_classpath
 
@@ -2051,10 +2051,13 @@ def _gen_gu_manifest(components, formatter, bundled=False):
                                               and (not isinstance(main_component, mx_sdk.GraalVmTool) or main_component.include_by_default))
 
     if main_component.stability is not None:
-        manifest["x-GraalVM-Stability-Level"] = main_component.stability
-        if main_component.stability in ("experimental", "earlyadopter", "supported"):
+        stability = main_component.stability
+        if _src_jdk_version > 11:
+            stability = "experimental"
+        manifest["x-GraalVM-Stability-Level"] = stability
+        if stability in ("experimental", "earlyadopter", "supported"):
             # set x-GraalVM-Stability for backward compatibility when possible
-            manifest["x-GraalVM-Stability"] = main_component.stability
+            manifest["x-GraalVM-Stability"] = stability
 
     dependencies = set()
     for comp in components:

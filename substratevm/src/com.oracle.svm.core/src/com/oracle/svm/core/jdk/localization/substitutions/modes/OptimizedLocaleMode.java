@@ -26,11 +26,11 @@ package com.oracle.svm.core.jdk.localization.substitutions.modes;
 
 import java.util.function.BooleanSupplier;
 
-import com.oracle.svm.core.jdk.localization.LocalizationSupport;
+import com.oracle.svm.core.jdk.localization.LocalizationFeature;
 
 public class OptimizedLocaleMode implements BooleanSupplier {
     @Override
     public boolean getAsBoolean() {
-        return LocalizationSupport.optimizedMode();
+        return LocalizationFeature.optimizedMode();
     }
 }
