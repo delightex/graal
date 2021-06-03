@@ -178,7 +178,7 @@ void determineCPUFeatures(CPUFeatures* features) {
   }
 }
 
-#elif defined(__aarch64__)
+#elif defined(__aarch64__) && !defined(_MACOSX_)
 
 #include <sys/auxv.h>
 #include <asm/hwcap.h>
