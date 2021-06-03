@@ -180,12 +180,27 @@ void determineCPUFeatures(CPUFeatures* features) {
 
 #elif defined(__aarch64__)
 
+#include "aarch64cpufeatures.h"
+#include <stdio.h>
+
+#if defined(_MACOSX_) // -> arm64 iOS
+
+void determineCPUFeatures(CPUFeatures* features) {
+    printf("Call determineCPUFeatures from graal-svm-java-11-ios-*.lib:\n");
+    if (features) {
+        printf("\tSet CPUFeatures::fFP to true\n");
+        features->fFP = 1;
+        printf("\tSet CPUFeatures::fASIMD to true\n");
+        features->fASIMD = 1;
+    }
+}
+
+#else // ifndef MACOSX -> arm64 linux
+
 #include <sys/auxv.h>
 #include <asm/hwcap.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "aarch64cpufeatures.h"
 
 #ifndef HWCAP_FP
 #define HWCAP_FP            (1L << 0)
@@ -279,6 +294,7 @@ void determineCPUFeatures(CPUFeatures* features) {
   if (_cpu == CPU_ARM && (_model == 0xd07 || _model2 == 0xd07)) features->fSTXRPREFETCH = !!(1);
   if (_cpu == CPU_CAVIUM && _model == 0xA1 && _variant == 0) features->fDMBATOMICS = !!(1);
 }
+#endif // ifdef MACOSX
 
 #else
 /*
