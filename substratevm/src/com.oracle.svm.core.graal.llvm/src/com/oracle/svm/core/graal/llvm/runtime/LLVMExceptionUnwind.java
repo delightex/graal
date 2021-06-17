@@ -141,10 +141,22 @@ public class LLVMExceptionUnwind {
     }
 
     public static void raiseException() {
-        _Unwind_Exception exceptionStructure = StackValue.get(_Unwind_Exception.class);
+        // MacOS requires exceptionStructure to be aligned on 16 bytes
+        // Ideally StackValue.getAligned16 should exist
+        // We increase size of allocated memory to allow alignAddress16Bytes the result
+        // StackValue.get result is always 8-bytes aligned on 64-bit systems
+        PointerBase memoryNonAligned = StackValue.get(SizeOf.get(_Unwind_Exception.class) + 8);
+
+        // Make sure the exceptionStructure is aligned to at least 16 bytes
+        _Unwind_Exception exceptionStructure = alignAddress16Bytes(memoryNonAligned);
+
         exceptionStructure.set_exception_class(CurrentIsolate.getCurrentThread());
         exceptionStructure.set_exception_cleanup(WordFactory.nullPointer());
         raiseException(exceptionStructure);
+    }
+
+    private static <T extends PointerBase> T alignAddress16Bytes(PointerBase addr) {
+        return WordFactory.pointer((addr.rawValue() + 15L) & ~(15L));
     }
 
     // Allow methods with non-standard names: Checkstyle: stop
