@@ -218,6 +218,23 @@ public interface Platform {
     }
 
     /**
+     * Supported operating system: Mac Catalyst OS.
+     *
+     * @since 21.0
+     */
+    interface MAC_CATALYST extends DARWIN {
+
+        /**
+         * Returns string representing MAC CATALYST OS.
+         *
+         * @since 21.0
+         */
+        default String getOS() {
+            return "MacCatalyst";
+        }
+    }
+
+    /**
      * Supported operating system: Windows.
      *
      * @since 19.0

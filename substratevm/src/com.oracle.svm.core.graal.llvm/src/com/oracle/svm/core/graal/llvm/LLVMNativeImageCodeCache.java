@@ -261,6 +261,8 @@ public class LLVMNativeImageCodeCache extends NativeImageCodeCache {
         args.add(outputPath);
         args.add(inputPath);
 
+        System.out.println("args = " + args);
+
         try {
             LLVMToolchain.runLLVMCommand("llc", basePath, args);
         } catch (RunFailureException e) {
