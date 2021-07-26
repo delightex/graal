@@ -370,6 +370,22 @@ public interface Platform {
     }
 
     /**
+     * Supported leaf platform: Mac Catalyst on x86 64-bit.
+     *
+     * @since 21.1
+     */
+    final class MAC_CATALYST_AMD64 implements MAC_CATALYST, AMD64 {
+
+        /**
+         * Instantiates a marker instance of this platform.
+         *
+         * @since 21.1
+         */
+        public MAC_CATALYST_AMD64() {
+        }
+    }
+
+    /**
      * Supported leaf platform: Windows on x86 64-bit.
      *
      * @since 19.0

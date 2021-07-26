@@ -163,7 +163,7 @@ class LLVMAMD64TargetSpecificFeature implements Feature {
                 if (Platform.includedIn(Platform.IOS.class)) {
                     list.add("-mtriple=x86_64-ios");
                 }
-                if (Platform.includedIn(Platform.MAC_CATALYST.class)) {
+                if (Platform.includedIn(Platform.MAC_CATALYST_AMD64.class)) {
                     System.out.println("add  -mtriple=x86_64-apple-ios-macabi ");
                     list.add("-mtriple=x86_64-apple-ios-macabi");
                 }

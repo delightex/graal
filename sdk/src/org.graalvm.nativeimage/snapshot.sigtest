@@ -297,7 +297,7 @@ CLSS public final static org.graalvm.nativeimage.Platform$MAC_CATALYST_AMD64
  outer org.graalvm.nativeimage.Platform
 cons public init()
 intf org.graalvm.nativeimage.Platform$AMD64
-intf org.graalvm.nativeimage.Platform$IOS
+intf org.graalvm.nativeimage.Platform$MAC_CATALYST
 supr java.lang.Object
 
 CLSS public abstract interface static org.graalvm.nativeimage.Platform$LINUX
