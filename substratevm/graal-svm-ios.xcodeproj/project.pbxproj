@@ -50,7 +50,7 @@
 
 /* Begin PBXFileReference section */
 		5A3DA625263708290069AF3E /* cpuid.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = cpuid.c; path = src/com.oracle.svm.native.libchelper/src/cpuid.c; sourceTree = "<group>"; };
-		5A7FF98F261CAE7500129BCA /* graal-svm-arm64-ios-d.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "graal-svm-arm64-ios-d.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5A7FF98F261CAE7500129BCA /* graal-svm-arm64-.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "graal-svm-arm64-.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5A7FF99D261CAED300129BCA /* foundation.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = foundation.c; path = src/com.oracle.svm.native.darwin/src/foundation.c; sourceTree = "<group>"; };
 		5A7FF9A0261CAEE100129BCA /* JvmFuncs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = JvmFuncs.c; path = src/com.oracle.svm.native.jvm.posix/src/JvmFuncs.c; sourceTree = "<group>"; };
 		5A7FF9A3261CAF0200129BCA /* timeZone.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = timeZone.c; path = src/com.oracle.svm.native.libchelper/src/timeZone.c; sourceTree = "<group>"; };
@@ -58,7 +58,7 @@
 		5A7FF9A5261CAF0200129BCA /* cSunMiscSignal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = cSunMiscSignal.c; path = src/com.oracle.svm.native.libchelper/src/cSunMiscSignal.c; sourceTree = "<group>"; };
 		5A7FF9A6261CAF0200129BCA /* codeSynchronization.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = codeSynchronization.c; path = src/com.oracle.svm.native.libchelper/src/codeSynchronization.c; sourceTree = "<group>"; };
 		5A7FF9A7261CAF0200129BCA /* macrosAsFunctions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = macrosAsFunctions.c; path = src/com.oracle.svm.native.libchelper/src/macrosAsFunctions.c; sourceTree = "<group>"; };
-		5AA1B38E2631B558000D6B3D /* graal-svm-x86-64-ios-simulator-d.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "graal-svm-x86-64-ios-simulator-d.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5AA1B38E2631B558000D6B3D /* graal-svm-x86-64-.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "graal-svm-x86-64-.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5AF08FC0261CB42A002B6026 /* JvmFuncsFallbacks.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = JvmFuncsFallbacks.c; path = src/com.oracle.svm.native.jvm.posix/src/src_gen/11/JvmFuncsFallbacks.c; sourceTree = "<group>"; };
 		5AF88C2F266780E0009C75C8 /* aarch64cpufeatures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = aarch64cpufeatures.h; path = src/com.oracle.svm.native.libchelper/include/aarch64cpufeatures.h; sourceTree = "<group>"; };
 		5AF88C32266780FC009C75C8 /* amd64cpufeatures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = amd64cpufeatures.h; path = src/com.oracle.svm.native.libchelper/include/amd64cpufeatures.h; sourceTree = "<group>"; };
@@ -103,8 +103,8 @@
 		5A7FF990261CAE7500129BCA /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				5A7FF98F261CAE7500129BCA /* graal-svm-arm64-ios-d.a */,
-				5AA1B38E2631B558000D6B3D /* graal-svm-x86-64-ios-simulator-d.a */,
+				5A7FF98F261CAE7500129BCA /* graal-svm-arm64-.a */,
+				5AA1B38E2631B558000D6B3D /* graal-svm-x86-64-.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -112,9 +112,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		5A7FF98E261CAE7500129BCA /* graal-svm-arm64-ios */ = {
+		5A7FF98E261CAE7500129BCA /* graal-svm-arm64 */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 5A7FF998261CAE7500129BCA /* Build configuration list for PBXNativeTarget "graal-svm-arm64-ios" */;
+			buildConfigurationList = 5A7FF998261CAE7500129BCA /* Build configuration list for PBXNativeTarget "graal-svm-arm64" */;
 			buildPhases = (
 				5A7FF98B261CAE7500129BCA /* Sources */,
 				5A7FF98C261CAE7500129BCA /* Frameworks */,
@@ -124,14 +124,14 @@
 			);
 			dependencies = (
 			);
-			name = "graal-svm-arm64-ios";
+			name = "graal-svm-arm64";
 			productName = "graal-svm-arm64-ios";
-			productReference = 5A7FF98F261CAE7500129BCA /* graal-svm-arm64-ios-d.a */;
+			productReference = 5A7FF98F261CAE7500129BCA /* graal-svm-arm64-.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		5AA1B37F2631B558000D6B3D /* graal-svm-x86-64-ios-simulator */ = {
+		5AA1B37F2631B558000D6B3D /* graal-svm-x86-64 */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 5AA1B38B2631B558000D6B3D /* Build configuration list for PBXNativeTarget "graal-svm-x86-64-ios-simulator" */;
+			buildConfigurationList = 5AA1B38B2631B558000D6B3D /* Build configuration list for PBXNativeTarget "graal-svm-x86-64" */;
 			buildPhases = (
 				5AA1B3802631B558000D6B3D /* Sources */,
 				5AA1B3892631B558000D6B3D /* Frameworks */,
@@ -141,9 +141,9 @@
 			);
 			dependencies = (
 			);
-			name = "graal-svm-x86-64-ios-simulator";
+			name = "graal-svm-x86-64";
 			productName = "graal-svm-arm64-ios";
-			productReference = 5AA1B38E2631B558000D6B3D /* graal-svm-x86-64-ios-simulator-d.a */;
+			productReference = 5AA1B38E2631B558000D6B3D /* graal-svm-x86-64-.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -172,8 +172,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				5A7FF98E261CAE7500129BCA /* graal-svm-arm64-ios */,
-				5AA1B37F2631B558000D6B3D /* graal-svm-x86-64-ios-simulator */,
+				5A7FF98E261CAE7500129BCA /* graal-svm-arm64 */,
+				5AA1B37F2631B558000D6B3D /* graal-svm-x86-64 */,
 			);
 		};
 /* End PBXProject section */
@@ -249,6 +249,11 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = YES;
+				DX_LIB_NAME = "";
+				"DX_LIB_NAME[sdk=iphoneos*]" = "ios-d";
+				"DX_LIB_NAME[sdk=iphonesimulator*]" = "ios-simulator-d";
+				"DX_LIB_NAME[sdk=macosx11.1]" = "mac-catalyst-d";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				EXECUTABLE_PREFIX = "";
@@ -273,6 +278,8 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 			};
 			name = Debug;
 		};
@@ -311,6 +318,11 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = YES;
+				DX_LIB_NAME = "";
+				"DX_LIB_NAME[sdk=iphoneos*]" = "ios-r";
+				"DX_LIB_NAME[sdk=iphonesimulator*]" = "ios-simulator-r";
+				"DX_LIB_NAME[sdk=macosx11.1]" = "mac-catalyst-r";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXECUTABLE_PREFIX = "";
@@ -332,6 +344,8 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -342,13 +356,14 @@
 				ARCHS = arm64;
 				CODE_SIGN_STYLE = Automatic;
 				CONFIGURATION_BUILD_DIR = "$(PROJECT_DIR)/xcode";
+				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = YES;
 				DEVELOPMENT_TEAM = 6H79QDPRAV;
 				EXECUTABLE_PREFIX = "";
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				MACOSX_DEPLOYMENT_TARGET = "";
 				OBJROOT = "$(PROJECT_DIR)/xcode";
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)-d";
+				PRODUCT_NAME = "$(TARGET_NAME)-$(DX_LIB_NAME)";
 				SKIP_INSTALL = YES;
 				SYMROOT = "${PROJECT_DIR}/xcode";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -363,6 +378,7 @@
 				ARCHS = arm64;
 				CODE_SIGN_STYLE = Automatic;
 				CONFIGURATION_BUILD_DIR = "$(PROJECT_DIR)/xcode";
+				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = YES;
 				DEVELOPMENT_TEAM = 6H79QDPRAV;
 				EXECUTABLE_PREFIX = "";
 				HEADER_SEARCH_PATHS = "$(inherited)";
@@ -370,7 +386,7 @@
 				OBJROOT = "$(PROJECT_DIR)/xcode";
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)-r";
+				PRODUCT_NAME = "$(TARGET_NAME)-$(DX_LIB_NAME)";
 				SKIP_INSTALL = YES;
 				SYMROOT = "${PROJECT_DIR}/xcode";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -385,13 +401,15 @@
 				ARCHS = x86_64;
 				CODE_SIGN_STYLE = Automatic;
 				CONFIGURATION_BUILD_DIR = "$(PROJECT_DIR)/xcode";
+				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = YES;
 				DEVELOPMENT_TEAM = 6H79QDPRAV;
 				EXECUTABLE_PREFIX = "";
+				GENERATE_MASTER_OBJECT_FILE = YES;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				MACOSX_DEPLOYMENT_TARGET = "";
 				OBJROOT = "$(PROJECT_DIR)/xcode";
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)-d";
+				PRODUCT_NAME = "$(TARGET_NAME)-$(DX_LIB_NAME)";
 				SKIP_INSTALL = YES;
 				SYMROOT = "${PROJECT_DIR}/xcode";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -406,14 +424,16 @@
 				ARCHS = x86_64;
 				CODE_SIGN_STYLE = Automatic;
 				CONFIGURATION_BUILD_DIR = "$(PROJECT_DIR)/xcode";
+				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = YES;
 				DEVELOPMENT_TEAM = 6H79QDPRAV;
 				EXECUTABLE_PREFIX = "";
+				GENERATE_MASTER_OBJECT_FILE = YES;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				MACOSX_DEPLOYMENT_TARGET = "";
 				OBJROOT = "$(PROJECT_DIR)/xcode";
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)-r";
+				PRODUCT_NAME = "$(TARGET_NAME)-$(DX_LIB_NAME)";
 				SKIP_INSTALL = YES;
 				SYMROOT = "${PROJECT_DIR}/xcode";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -434,7 +454,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		5A7FF998261CAE7500129BCA /* Build configuration list for PBXNativeTarget "graal-svm-arm64-ios" */ = {
+		5A7FF998261CAE7500129BCA /* Build configuration list for PBXNativeTarget "graal-svm-arm64" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5A7FF999261CAE7500129BCA /* Debug */,
@@ -443,7 +463,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		5AA1B38B2631B558000D6B3D /* Build configuration list for PBXNativeTarget "graal-svm-x86-64-ios-simulator" */ = {
+		5AA1B38B2631B558000D6B3D /* Build configuration list for PBXNativeTarget "graal-svm-x86-64" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5AA1B38C2631B558000D6B3D /* Debug */,

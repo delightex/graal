@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "5AA1B37F2631B558000D6B3D"
-               BuildableName = "graal-svm-x86-64-ios-simulator-r.a"
-               BlueprintName = "graal-svm-x86-64-ios-simulator"
+               BlueprintIdentifier = "5A7FF98E261CAE7500129BCA"
+               BuildableName = "graal-svm-arm64-ios-r.a"
+               BlueprintName = "graal-svm-arm64"
                ReferencedContainer = "container:graal-svm-ios.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -47,6 +47,15 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "5A7FF98E261CAE7500129BCA"
+            BuildableName = "graal-svm-arm64-ios-r.a"
+            BlueprintName = "graal-svm-arm64"
+            ReferencedContainer = "container:graal-svm-ios.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

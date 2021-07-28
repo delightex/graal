@@ -163,6 +163,9 @@ class LLVMAMD64TargetSpecificFeature implements Feature {
                 if (Platform.includedIn(Platform.IOS.class)) {
                     list.add("-mtriple=x86_64-ios");
                 }
+                if (Platform.includedIn(Platform.MAC_CATALYST.class)) {
+                    list.add("-mtriple=x86_64-apple-ios-macabi");
+                }
                 return list;
             }
         });
@@ -232,6 +235,9 @@ class LLVMAArch64TargetSpecificFeature implements Feature {
                 list.add("--aarch64-frame-record-on-top");
                 if (Platform.includedIn(Platform.IOS.class)) {
                     list.add("-mtriple=arm64-ios");
+                }
+                if (Platform.includedIn(Platform.MAC_CATALYST.class)) {
+                    list.add("-mtriple=arm64-apple-ios-macabi");
                 }
                 return list;
             }

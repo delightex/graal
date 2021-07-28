@@ -218,6 +218,23 @@ public interface Platform {
     }
 
     /**
+     * Supported operating system: Mac Catalyst OS.
+     *
+     * @since 21.3
+     */
+    interface MAC_CATALYST extends DARWIN {
+
+        /**
+         * Returns string representing MAC CATALYST OS.
+         *
+         * @since 21.3
+         */
+        default String getOS() {
+            return "MacCatalyst";
+        }
+    }
+
+    /**
      * Supported operating system: Windows.
      *
      * @since 19.0
@@ -349,6 +366,38 @@ public interface Platform {
          * @since 21.1
          */
         public IOS_AMD64() {
+        }
+    }
+
+    /**
+     * Supported leaf platform: Mac Catalyst on x86 64-bit.
+     *
+     * @since 21.3
+     */
+    final class MAC_CATALYST_AMD64 implements MAC_CATALYST, AMD64 {
+
+        /**
+         * Instantiates a marker instance of this platform.
+         *
+         * @since 21.3
+         */
+        public MAC_CATALYST_AMD64() {
+        }
+    }
+
+    /**
+     * Supported leaf platform: Mac Catalyst on AArch 64-bit.
+     *
+     * @since 21.3
+     */
+    final class MAC_CATALYST_AARCH64 implements MAC_CATALYST, AARCH64 {
+
+        /**
+         * Instantiates a marker instance of this platform.
+         *
+         * @since 21.3
+         */
+        public MAC_CATALYST_AARCH64() {
         }
     }
 

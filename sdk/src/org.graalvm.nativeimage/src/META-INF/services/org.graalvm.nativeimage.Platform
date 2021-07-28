@@ -5,4 +5,6 @@ org.graalvm.nativeimage.Platform$DARWIN_AMD64
 org.graalvm.nativeimage.Platform$DARWIN_AARCH64
 org.graalvm.nativeimage.Platform$IOS_AMD64
 org.graalvm.nativeimage.Platform$IOS_AARCH64
+org.graalvm.nativeimage.Platform$MAC_CATALYST_AMD64
+org.graalvm.nativeimage.Platform$MAC_CATALYST_AARCH64
 org.graalvm.nativeimage.Platform$WINDOWS_AMD64
