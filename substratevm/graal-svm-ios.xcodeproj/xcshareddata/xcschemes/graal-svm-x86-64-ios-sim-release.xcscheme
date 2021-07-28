@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "5AA1B37F2631B558000D6B3D"
-               BuildableName = "graal-svm-x86-64-ios-simulator-r.a"
-               BlueprintName = "graal-svm-x86-64-ios-simulator"
+               BuildableName = "graal-svm-x86-64-.a"
+               BlueprintName = "graal-svm-x86-64"
                ReferencedContainer = "container:graal-svm-ios.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -51,8 +51,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5AA1B37F2631B558000D6B3D"
-            BuildableName = "graal-svm-x86-64-ios-simulator-r.a"
-            BlueprintName = "graal-svm-x86-64-ios-simulator"
+            BuildableName = "graal-svm-x86-64-.a"
+            BlueprintName = "graal-svm-x86-64"
             ReferencedContainer = "container:graal-svm-ios.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
