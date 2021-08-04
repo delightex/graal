@@ -250,10 +250,10 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = YES;
-				DX_LIB_NAME = "";
-				"DX_LIB_NAME[sdk=iphoneos*]" = "ios-d";
-				"DX_LIB_NAME[sdk=iphonesimulator*]" = "ios-simulator-d";
-				"DX_LIB_NAME[sdk=macosx11.1]" = "mac-catalyst-d";
+				CUSTOM_LIB_NAME = "";
+				"CUSTOM_LIB_NAME[sdk=iphoneos*]" = "ios-d";
+				"CUSTOM_LIB_NAME[sdk=iphonesimulator*]" = "ios-simulator-d";
+				"CUSTOM_LIB_NAME[sdk=macosx*]" = "mac-catalyst-d";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				EXECUTABLE_PREFIX = "";
@@ -319,10 +319,10 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = YES;
-				DX_LIB_NAME = "";
-				"DX_LIB_NAME[sdk=iphoneos*]" = "ios-r";
-				"DX_LIB_NAME[sdk=iphonesimulator*]" = "ios-simulator-r";
-				"DX_LIB_NAME[sdk=macosx11.1]" = "mac-catalyst-r";
+				CUSTOM_LIB_NAME = "";
+				"CUSTOM_LIB_NAME[sdk=iphoneos*]" = "ios-r";
+				"CUSTOM_LIB_NAME[sdk=iphonesimulator*]" = "ios-simulator-r";
+				"CUSTOM_LIB_NAME[sdk=macosx*]" = "mac-catalyst-r";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXECUTABLE_PREFIX = "";
@@ -363,7 +363,7 @@
 				MACOSX_DEPLOYMENT_TARGET = "";
 				OBJROOT = "$(PROJECT_DIR)/xcode";
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)-$(DX_LIB_NAME)";
+				PRODUCT_NAME = "$(TARGET_NAME)-$(CUSTOM_LIB_NAME)";
 				SKIP_INSTALL = YES;
 				SYMROOT = "${PROJECT_DIR}/xcode";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -386,7 +386,7 @@
 				OBJROOT = "$(PROJECT_DIR)/xcode";
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)-$(DX_LIB_NAME)";
+				PRODUCT_NAME = "$(TARGET_NAME)-$(CUSTOM_LIB_NAME)";
 				SKIP_INSTALL = YES;
 				SYMROOT = "${PROJECT_DIR}/xcode";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -409,7 +409,7 @@
 				MACOSX_DEPLOYMENT_TARGET = "";
 				OBJROOT = "$(PROJECT_DIR)/xcode";
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)-$(DX_LIB_NAME)";
+				PRODUCT_NAME = "$(TARGET_NAME)-$(CUSTOM_LIB_NAME)";
 				SKIP_INSTALL = YES;
 				SYMROOT = "${PROJECT_DIR}/xcode";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -433,7 +433,7 @@
 				OBJROOT = "$(PROJECT_DIR)/xcode";
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)-$(DX_LIB_NAME)";
+				PRODUCT_NAME = "$(TARGET_NAME)-$(CUSTOM_LIB_NAME)";
 				SKIP_INSTALL = YES;
 				SYMROOT = "${PROJECT_DIR}/xcode";
 				TARGETED_DEVICE_FAMILY = "1,2";
