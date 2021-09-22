@@ -550,12 +550,27 @@ void determineCPUFeatures(CPUFeatures *features)
 
 #elif defined(__aarch64__)
 
+#include "aarch64cpufeatures.h"
+#include <stdio.h>
+
+#if defined(_MACOSX_) // -> arm64 iOS
+
+void determineCPUFeatures(CPUFeatures* features) {
+//    printf("Call determineCPUFeatures from graal-svm-java-11-ios-*.lib:\n");
+//        printf("\tSet CPUFeatures::fFP to true\n");
+//        printf("\tSet CPUFeatures::fASIMD to true\n");
+    if (features) {
+        features->fFP = 1;
+        features->fASIMD = 1;
+    }
+}
+
+#else // ifndef MACOSX -> arm64 linux
+
 #include <sys/auxv.h>
 #include <asm/hwcap.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "aarch64cpufeatures.h"
 
 /*
  * The corresponding HotSpot code can be found in vm_version_aarch64 and
@@ -675,6 +690,7 @@ void determineCPUFeatures(CPUFeatures* features) {
   if (_cpu == CPU_CAVIUM && _model == 0xA1 && _variant == 0)
     features->fDMBATOMICS = 1;
 }
+#endif // ifdef MACOSX
 
 #else
 /*
