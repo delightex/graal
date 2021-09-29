@@ -251,26 +251,15 @@ public class Signal {
          *   __uint32_t __pad;       // Same size for 32-bit or 64-bit clients
          * };
          * */
-        @CFieldAddress
-        DarwinGregsPointer regs();
 
-        @CFieldOffset("__ss.__fp")
-        int fp_offset();
+        @CField("__ss.__fp")
+        long fp();
 
-        @CFieldOffset("__ss.__lr")
-        int lr_offset();
+        @CField("__ss.__sp")
+        long sp();
 
-        @CFieldOffset("__ss.__sp")
-        int sp_offset();
-
-        @CFieldOffset("__ss.__pc")
-        int pc_offset();
-
-        @CFieldOffset("__ss.__cpsr")
-        int cpsr_offset();
-
-        @CFieldOffset("__ss.__pad")
-        int pad_offset();
+        @CField("__ss.__pc")
+        long pc();
     }
 
     @Platforms({Platform.DARWIN_AMD64.class, Platform.IOS_AMD64.class})
