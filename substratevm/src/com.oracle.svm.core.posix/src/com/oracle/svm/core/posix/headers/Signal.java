@@ -116,6 +116,12 @@ public class Signal {
         long read(int index);
     }
 
+    @Platforms(Platform.DARWIN.class)
+    @CPointerTo(nameOfCType = "long long")
+    public interface DarwinGregsPointer extends PointerBase {
+        long read(int index);
+    }
+
     /**
      * Used in {@link SubstrateSegfaultHandler}. So, this must not be a {@link CEnum} as this would
      * result in machine code that needs a proper a heap base.
@@ -245,92 +251,8 @@ public class Signal {
          *   __uint32_t __pad;       // Same size for 32-bit or 64-bit clients
          * };
          * */
-        @CFieldOffset("__ss.__x[0]")
-        int r0_offset();
-
-        @CFieldOffset("__ss.__x[1]")
-        int r1_offset();
-
-        @CFieldOffset("__ss.__x[2]")
-        int r2_offset();
-
-        @CFieldOffset("__ss.__x[3]")
-        int r3_offset();
-
-        @CFieldOffset("__ss.__x[4]")
-        int r4_offset();
-
-        @CFieldOffset("__ss.__x[5]")
-        int r5_offset();
-
-        @CFieldOffset("__ss.__x[6]")
-        int r6_offset();
-
-        @CFieldOffset("__ss.__x[7]")
-        int r7_offset();
-
-        @CFieldOffset("__ss.__x[8]")
-        int r8_offset();
-
-        @CFieldOffset("__ss.__x[9]")
-        int r9_offset();
-
-        @CFieldOffset("__ss.__x[10]")
-        int r10_offset();
-
-        @CFieldOffset("__ss.__x[11]")
-        int r11_offset();
-
-        @CFieldOffset("__ss.__x[12]")
-        int r12_offset();
-
-        @CFieldOffset("__ss.__x[13]")
-        int r13_offset();
-
-        @CFieldOffset("__ss.__x[14]")
-        int r14_offset();
-
-        @CFieldOffset("__ss.__x[15]")
-        int r15_offset();
-
-        @CFieldOffset("__ss.__x[16]")
-        int r16_offset();
-
-        @CFieldOffset("__ss.__x[17]")
-        int r17_offset();
-
-        @CFieldOffset("__ss.__x[18]")
-        int r18_offset();
-
-        @CFieldOffset("__ss.__x[19]")
-        int r19_offset();
-
-        @CFieldOffset("__ss.__x[20]")
-        int r20_offset();
-
-        @CFieldOffset("__ss.__x[21]")
-        int r21_offset();
-
-        @CFieldOffset("__ss.__x[22]")
-        int r22_offset();
-
-        @CFieldOffset("__ss.__x[23]")
-        int r23_offset();
-
-        @CFieldOffset("__ss.__x[24]")
-        int r24_offset();
-
-        @CFieldOffset("__ss.__x[25]")
-        int r25_offset();
-
-        @CFieldOffset("__ss.__x[26]")
-        int r26_offset();
-
-        @CFieldOffset("__ss.__x[27]")
-        int r27_offset();
-
-        @CFieldOffset("__ss.__x[28]")
-        int r28_offset();
+        @CFieldAddress
+        DarwinGregsPointer regs();
 
         @CFieldOffset("__ss.__fp")
         int fp_offset();
@@ -413,6 +335,7 @@ public class Signal {
     @CStruct
     @Platforms({Platform.LINUX_AARCH64.class, Platform.ANDROID_AARCH64.class})
     public interface mcontext_t extends PointerBase {
+        // https://code.woboq.org/userspace/glibc/sysdeps/unix/sysv/linux/aarch64/sys/ucontext.h.html
         @CField
         long fault_address();
 

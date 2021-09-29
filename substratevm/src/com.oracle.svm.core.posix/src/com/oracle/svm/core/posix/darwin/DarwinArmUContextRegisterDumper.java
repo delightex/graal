@@ -40,6 +40,7 @@ import com.oracle.svm.core.annotate.Uninterruptible;
 import com.oracle.svm.core.log.Log;
 import com.oracle.svm.core.posix.UContextRegisterDumper;
 import com.oracle.svm.core.posix.headers.Signal;
+import com.oracle.svm.core.posix.headers.Signal.DarwinGregsPointer;
 import com.oracle.svm.core.posix.headers.Signal.ucontext_t;
 import com.oracle.svm.core.util.VMError;
 
@@ -59,35 +60,36 @@ class DarwinArmUContextRegisterDumper implements UContextRegisterDumper {
     @Override
     public void dumpRegisters(Log log, ucontext_t uContext, boolean printLocationInfo, boolean allowJavaHeapAccess, boolean allowUnsafeOperations) {
         Signal.MContext64Arm sigcontext = uContext.uc_mcontext64_arm();
-        dumpReg(log, "R0 ", ((Pointer) sigcontext).readLong(sigcontext.r0_offset()), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
-        dumpReg(log, "R1 ", ((Pointer) sigcontext).readLong(sigcontext.r1_offset()), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
-        dumpReg(log, "R2 ", ((Pointer) sigcontext).readLong(sigcontext.r2_offset()), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
-        dumpReg(log, "R3 ", ((Pointer) sigcontext).readLong(sigcontext.r3_offset()), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
-        dumpReg(log, "R4 ", ((Pointer) sigcontext).readLong(sigcontext.r4_offset()), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
-        dumpReg(log, "R5 ", ((Pointer) sigcontext).readLong(sigcontext.r5_offset()), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
-        dumpReg(log, "R6 ", ((Pointer) sigcontext).readLong(sigcontext.r6_offset()), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
-        dumpReg(log, "R7 ", ((Pointer) sigcontext).readLong(sigcontext.r7_offset()), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
-        dumpReg(log, "R8 ", ((Pointer) sigcontext).readLong(sigcontext.r8_offset()), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
-        dumpReg(log, "R9 ", ((Pointer) sigcontext).readLong(sigcontext.r9_offset()), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
-        dumpReg(log, "R10 ", ((Pointer) sigcontext).readLong(sigcontext.r10_offset()), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
-        dumpReg(log, "R11 ", ((Pointer) sigcontext).readLong(sigcontext.r11_offset()), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
-        dumpReg(log, "R12 ", ((Pointer) sigcontext).readLong(sigcontext.r12_offset()), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
-        dumpReg(log, "R13 ", ((Pointer) sigcontext).readLong(sigcontext.r13_offset()), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
-        dumpReg(log, "R14 ", ((Pointer) sigcontext).readLong(sigcontext.r14_offset()), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
-        dumpReg(log, "R15 ", ((Pointer) sigcontext).readLong(sigcontext.r15_offset()), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
-        dumpReg(log, "R16 ", ((Pointer) sigcontext).readLong(sigcontext.r16_offset()), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
-        dumpReg(log, "R17 ", ((Pointer) sigcontext).readLong(sigcontext.r17_offset()), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
-        dumpReg(log, "R18 ", ((Pointer) sigcontext).readLong(sigcontext.r18_offset()), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
-        dumpReg(log, "R19 ", ((Pointer) sigcontext).readLong(sigcontext.r19_offset()), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
-        dumpReg(log, "R20 ", ((Pointer) sigcontext).readLong(sigcontext.r20_offset()), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
-        dumpReg(log, "R21 ", ((Pointer) sigcontext).readLong(sigcontext.r21_offset()), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
-        dumpReg(log, "R22 ", ((Pointer) sigcontext).readLong(sigcontext.r22_offset()), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
-        dumpReg(log, "R23 ", ((Pointer) sigcontext).readLong(sigcontext.r23_offset()), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
-        dumpReg(log, "R24 ", ((Pointer) sigcontext).readLong(sigcontext.r24_offset()), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
-        dumpReg(log, "R25 ", ((Pointer) sigcontext).readLong(sigcontext.r25_offset()), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
-        dumpReg(log, "R26 ", ((Pointer) sigcontext).readLong(sigcontext.r26_offset()), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
-        dumpReg(log, "R27 ", ((Pointer) sigcontext).readLong(sigcontext.r27_offset()), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
-        dumpReg(log, "R28 ", ((Pointer) sigcontext).readLong(sigcontext.r28_offset()), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
+        DarwinGregsPointer regs = sigcontext.regs();
+        dumpReg(log, "R0 ", regs.read(0), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
+        dumpReg(log, "R1 ", regs.read(1), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
+        dumpReg(log, "R2 ", regs.read(2), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
+        dumpReg(log, "R3 ", regs.read(3), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
+        dumpReg(log, "R4 ", regs.read(4), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
+        dumpReg(log, "R5 ", regs.read(5), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
+        dumpReg(log, "R6 ", regs.read(6), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
+        dumpReg(log, "R7 ", regs.read(7), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
+        dumpReg(log, "R8 ", regs.read(8), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
+        dumpReg(log, "R9 ", regs.read(9), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
+        dumpReg(log, "R10 ", regs.read(10), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
+        dumpReg(log, "R11 ", regs.read(11), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
+        dumpReg(log, "R12 ", regs.read(12), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
+        dumpReg(log, "R13 ", regs.read(13), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
+        dumpReg(log, "R14 ", regs.read(14), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
+        dumpReg(log, "R15 ", regs.read(15), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
+        dumpReg(log, "R16 ", regs.read(16), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
+        dumpReg(log, "R17 ", regs.read(17), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
+        dumpReg(log, "R18 ", regs.read(18), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
+        dumpReg(log, "R19 ", regs.read(19), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
+        dumpReg(log, "R20 ", regs.read(20), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
+        dumpReg(log, "R21 ", regs.read(21), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
+        dumpReg(log, "R22 ", regs.read(22), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
+        dumpReg(log, "R23 ", regs.read(23), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
+        dumpReg(log, "R24 ", regs.read(24), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
+        dumpReg(log, "R25 ", regs.read(25), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
+        dumpReg(log, "R26 ", regs.read(26), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
+        dumpReg(log, "R27 ", regs.read(27), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
+        dumpReg(log, "R28 ", regs.read(28), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
         dumpReg(log, "FP", ((Pointer) sigcontext).readLong(sigcontext.fp_offset()), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
         dumpReg(log, "LR", ((Pointer) sigcontext).readLong(sigcontext.lr_offset()), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
         dumpReg(log, "SP", ((Pointer) sigcontext).readLong(sigcontext.sp_offset()), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
@@ -113,7 +115,7 @@ class DarwinArmUContextRegisterDumper implements UContextRegisterDumper {
     @Override
     public PointerBase getSP(ucontext_t uContext) {
         Signal.MContext64Arm sigcontext = uContext.uc_mcontext64_arm();
-        return WordFactory.nullPointer();
+        return WordFactory.pointer(sigcontext.sp_offset());
     }
 
     @Override
