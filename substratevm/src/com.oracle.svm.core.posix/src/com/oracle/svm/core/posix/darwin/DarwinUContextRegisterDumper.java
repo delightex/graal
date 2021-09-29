@@ -78,6 +78,11 @@ class DarwinUContextRegisterDumper implements UContextRegisterDumper {
         dumpReg(log, "R15 ", ((Pointer) sigcontext).readLong(sigcontext.r15_offset()), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
         dumpReg(log, "EFL ", ((Pointer) sigcontext).readLong(sigcontext.efl_offset()), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
         dumpReg(log, "RIP ", ((Pointer) sigcontext).readLong(sigcontext.rip_offset()), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
+
+        Signal.MContext64Arm sigcontextArm64 = uContext.uc_mcontext64_arm();
+        dumpReg(log, "PC", sigcontextArm64.pc(), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
+        dumpReg(log, "SP", sigcontextArm64.sp(), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
+        dumpReg(log, "FP", sigcontextArm64.fp(), printLocationInfo, allowJavaHeapAccess, allowUnsafeOperations);
     }
 
     @Override
