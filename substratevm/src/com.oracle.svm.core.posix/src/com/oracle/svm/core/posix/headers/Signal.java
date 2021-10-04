@@ -116,12 +116,6 @@ public class Signal {
         long read(int index);
     }
 
-    @Platforms(Platform.DARWIN.class)
-    @CPointerTo(nameOfCType = "long long")
-    public interface DarwinGregsPointer extends PointerBase {
-        long read(int index);
-    }
-
     /**
      * Used in {@link SubstrateSegfaultHandler}. So, this must not be a {@link CEnum} as this would
      * result in machine code that needs a proper a heap base.
@@ -221,37 +215,6 @@ public class Signal {
     @Platforms({Platform.IOS_AARCH64.class})
     @CStruct(value = "__darwin_mcontext64", addStructKeyword = true)
     public interface MContext64Arm extends PointerBase {
-        // https://github.com/xybp888/iOS-SDKs/blob/master/iPhoneOS11.2.sdk/usr/include/sys/cdefs.h#L440
-        /**
-         * Because the __LP64__ environment only supports UNIX03 semantics it causes __DARWIN_UNIX03 to be
-         * defined, but causes __DARWIN_ALIAS to do no symbol mangling. (c)
-         * */
-        // https://github.com/xybp888/iOS-SDKs/blob/master/iPhoneOS11.2.sdk/usr/include/arm/_mcontext.h#L61
-        /**
-         * *  #define _STRUCT_MCONTEXT64      struct __darwin_mcontext64
-         * * _STRUCT_MCONTEXT64
-         * *  {
-         * *     _STRUCT_ARM_EXCEPTION_STATE64   __es;
-         * *     _STRUCT_ARM_THREAD_STATE64      __ss;
-         * *     _STRUCT_ARM_NEON_STATE64        __ns;
-         * * };
-        */
-        // https://github.com/xybp888/iOS-SDKs/blob/master/iPhoneOS11.2.sdk/usr/include/mach/arm/_structs.h#L96
-        /**
-         * #if __DARWIN_UNIX03
-         * #define _STRUCT_ARM_THREAD_STATE64	struct __darwin_arm_thread_state64
-         * _STRUCT_ARM_THREAD_STATE64
-         * {
-         * 	 __uint64_t __x[29];  // General purpose registers x0-x28
-         *   __uint64_t __fp;        // Frame pointer x29
-         *   __uint64_t __lr;        // Link register x30
-         *   __uint64_t __sp;        // Stack pointer x31
-         *   __uint64_t __pc;        // Program counter
-         *   __uint32_t __cpsr;      // Current program status register
-         *   __uint32_t __pad;       // Same size for 32-bit or 64-bit clients
-         * };
-         * */
-
         @CField("__ss.__fp")
         long fp();
 
@@ -324,7 +287,6 @@ public class Signal {
     @CStruct
     @Platforms({Platform.LINUX_AARCH64.class, Platform.ANDROID_AARCH64.class})
     public interface mcontext_t extends PointerBase {
-        // https://code.woboq.org/userspace/glibc/sysdeps/unix/sysv/linux/aarch64/sys/ucontext.h.html
         @CField
         long fault_address();
 
