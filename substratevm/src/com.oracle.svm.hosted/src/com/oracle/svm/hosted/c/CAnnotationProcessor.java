@@ -150,12 +150,12 @@ public class CAnnotationProcessor {
     }
 
     private Path compileQueryCode(Path queryFile) {
-        Path dest = Paths.get("/Users/Andrey.Mikhalev/Documents/Tools/graal-21.1.0/caps").resolve(queryFile.getFileName());
-        try {
-            Files.copy(queryFile, dest);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        Path dest = Paths.get("/Users/Andrey.Mikhalev/Documents/Tools/graal-21.1.0/caps").resolve(queryFile.getFileName());
+//        try {
+//            Files.copy(queryFile, dest);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
         /* replace the '.c' or '.cpp' from the end to get the binary name */
         Path fileNamePath = queryFile.getFileName();
         if (fileNamePath == null) {

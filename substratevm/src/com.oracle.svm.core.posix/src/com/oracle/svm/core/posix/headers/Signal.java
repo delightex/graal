@@ -214,11 +214,11 @@ public class Signal {
         MContext64 uc_mcontext64();
 
         @CField("uc_mcontext")
-        @Platforms({Platform.IOS_AARCH64.class, Platform.IOS_AMD64.class, Platform.DARWIN_AMD64.class})
+        @Platforms({Platform.IOS_AARCH64.class})
         MContext64Arm uc_mcontext64_arm();
     }
 
-    @Platforms({Platform.IOS_AARCH64.class, Platform.IOS_AMD64.class, Platform.DARWIN_AMD64.class})
+    @Platforms({Platform.IOS_AARCH64.class})
     @CStruct(value = "__darwin_mcontext64", addStructKeyword = true)
     public interface MContext64Arm extends PointerBase {
         // https://github.com/xybp888/iOS-SDKs/blob/master/iPhoneOS11.2.sdk/usr/include/sys/cdefs.h#L440
