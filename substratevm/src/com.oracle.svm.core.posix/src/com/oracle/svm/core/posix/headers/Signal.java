@@ -204,11 +204,28 @@ public class Signal {
         mcontext_t uc_mcontext();
 
         @CField("uc_mcontext")
-        @Platforms({Platform.DARWIN.class})
+        @Platforms({Platform.DARWIN_AMD64.class, Platform.IOS_AMD64.class})
         MContext64 uc_mcontext64();
+
+        @CField("uc_mcontext")
+        @Platforms({Platform.IOS_AARCH64.class})
+        MContext64Arm uc_mcontext64_arm();
     }
 
-    @Platforms({Platform.DARWIN.class})
+    @Platforms({Platform.IOS_AARCH64.class})
+    @CStruct(value = "__darwin_mcontext64", addStructKeyword = true)
+    public interface MContext64Arm extends PointerBase {
+        @CField("__ss.__fp")
+        long fp();
+
+        @CField("__ss.__sp")
+        long sp();
+
+        @CField("__ss.__pc")
+        long pc();
+    }
+
+    @Platforms({Platform.DARWIN_AMD64.class, Platform.IOS_AMD64.class})
     @CStruct(value = "__darwin_mcontext64", addStructKeyword = true)
     public interface MContext64 extends PointerBase {
 
