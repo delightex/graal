@@ -1,10 +1,10 @@
 # iOS
-xcodebuild -sdk iphoneos -arch arm64 -project graal-svm-ios.xcodeproj -scheme graal-svm-arm64-debug
-xcodebuild -sdk iphoneos -arch arm64 -project graal-svm-ios.xcodeproj -scheme graal-svm-arm64-release
+xcodebuild -sdk iphoneos -arch arm64 -project graal-svm-ios.xcodeproj -scheme graal-svm-arm64-debug > xcode/graal-svm-arm64-debug.log
+xcodebuild -sdk iphoneos -arch arm64 -project graal-svm-ios.xcodeproj -scheme graal-svm-arm64-release > xcode/graal-svm-arm64-release.log
 
 # iOS Simulator
-xcodebuild -sdk iphonesimulator -arch x86_64 -project graal-svm-ios.xcodeproj -scheme graal-svm-x86-64-debug
-xcodebuild -sdk iphonesimulator -arch x86_64 -project graal-svm-ios.xcodeproj -scheme graal-svm-x86-64-release
+xcodebuild -sdk iphonesimulator -arch x86_64 -project graal-svm-ios.xcodeproj -scheme graal-svm-x86-64-debug > xcode/graal-svm-x86-64-debug.log
+xcodebuild -sdk iphonesimulator -arch x86_64 -project graal-svm-ios.xcodeproj -scheme graal-svm-x86-64-release > xcode/graal-svm-x86-64-release.log
 
 # Mac Catalyst (experimental)
 #xcodebuild -sdk macosx -arch x86_64 -project graal-svm-ios.xcodeproj -scheme graal-svm-x86-64-debug
