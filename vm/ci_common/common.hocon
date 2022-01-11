@@ -129,7 +129,6 @@ fastr_linux: ${fastr} {
     PKG_LDFLAGS_OVERRIDE : "-L/cm/shared/apps/zlib/1.2.11/lib -L/cm/shared/apps/bzip2/1.0.6/lib -L/cm/shared/apps/xz/5.2.2/lib -L/cm/shared/apps/pcre2/10.37/lib -L/cm/shared/apps/curl/7.50.1/lib -L/cm/shared/apps/gcc/4.8.5/lib64"
     FASTR_FC: "/cm/shared/apps/gcc/4.8.5/bin/gfortran"
     FASTR_CC: "/cm/shared/apps/gcc/4.8.5/bin/gcc"
-    GNUR_HOME_BINARY: "/cm/shared/apps/gnur/4.0.3-gcc4.8.5-pcre2/lib64/R"
   }
   downloads: {
     BLAS_LAPACK_DIR: { name: "fastr-403-blas-lapack-gcc", version: "4.8.5", platformspecific: true },
@@ -410,6 +409,7 @@ deploy_graalvm_base_darwin_amd64: {
 
 deploy_graalvm_installables_darwin_amd64: {
   run: [
+    [set-export, VM_ENV, "${VM_ENV}-darwin"]
     ${mx_vm_installables} [graalvm-show]
     ${mx_vm_installables} [build]
     ${mx_vm_installables} ${maven_deploy_sdk_components}
@@ -495,8 +495,8 @@ builds += [
   #
 
   # Linux/AMD64
-  ${vm_java_11} ${full_vm_build_linux} ${linux-deploy} ${deploy_vm_linux} ${deploy_graalvm_linux_amd64} {name: deploy-vm-java11-linux-amd64}
-  ${vm_java_17} ${full_vm_build_linux} ${linux-deploy} ${deploy_vm_linux} ${deploy_graalvm_linux_amd64} {name: deploy-vm-java17-linux-amd64}
+  ${vm_linux_amd64_java_11} ${full_vm_build_linux} ${linux-deploy} ${deploy_vm_linux} ${deploy_graalvm_linux_amd64} {name: deploy-vm-java11-linux-amd64}
+  ${vm_linux_amd64_java_17} ${full_vm_build_linux} ${linux-deploy} ${deploy_vm_linux} ${deploy_graalvm_linux_amd64} {name: deploy-vm-java17-linux-amd64}
 
   # Linux/AARCH64
   ${vm_java_11} ${full_vm_build_linux_aarch64} ${linux-deploy} ${deploy_daily_vm_linux_aarch64} ${deploy_graalvm_linux_aarch64} {name: deploy-vm-java11-linux-aarch64}
@@ -526,7 +526,7 @@ builds += [
   #
 
   # Linux/AMD64
-  ${vm_java_11} ${full_vm_build_linux} ${linux-deploy} ${ondemand_vm_linux} {
+  ${vm_linux_amd64_java_11} ${full_vm_build_linux} ${linux-deploy} ${ondemand_vm_linux} {
     run: [
       ${mx_vm_installables} [graalvm-show]
       ${mx_vm_installables} [build]

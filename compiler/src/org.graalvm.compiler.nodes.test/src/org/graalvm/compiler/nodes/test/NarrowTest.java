@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, 2021, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2022, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -22,19 +22,33 @@
  * or visit www.oracle.com if you need additional information or have any
  * questions.
  */
-package org.graalvm.compiler.lir.aarch64;
+package org.graalvm.compiler.nodes.test;
 
-import org.graalvm.compiler.lir.gen.ArithmeticLIRGeneratorTool;
+import org.graalvm.compiler.api.directives.GraalDirectives;
+import org.graalvm.compiler.core.test.GraalCompilerTest;
+import org.junit.Test;
 
-import jdk.vm.ci.meta.Value;
+public class NarrowTest extends GraalCompilerTest {
 
-/**
- * This interface can be used to generate AArch64 LIR for arithmetic operations.
- */
-public interface AArch64ArithmeticLIRGeneratorTool extends ArithmeticLIRGeneratorTool {
+    @Test
+    public void testSnippet0() {
+        test("snippet0", (char) 0);
+    }
 
-    Value emitCountLeadingZeros(Value value);
+    static boolean snippet0(char c0) {
+        return -2 > (byte) ((byte) c0 / (byte) 2134864769);
+    }
 
-    Value emitCountTrailingZeros(Value value);
+    @Test
+    public void testSnippet1() {
+        test("snippet1", 50400L);
+    }
 
+    static boolean snippet1(long l0) {
+        if ((char) ((byte) l0) >= Character.MAX_VALUE) {
+            return true;
+        }
+        GraalDirectives.blackhole((byte) l0);
+        return false;
+    }
 }

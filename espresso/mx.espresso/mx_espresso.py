@@ -207,13 +207,24 @@ Usage: java -truffle [-options] class [args...]
 
 To rebuild the polyglot library:
     gu rebuild-images libpolyglot -cp """ + lib_espresso_cp,
-    stability="experimental",
+    stability="supported",
 ))
 
 if LLVM_JAVA_HOME:
+    release_dict = mx_sdk_vm.parse_release_file(join(LLVM_JAVA_HOME, 'release'))
+    implementor = release_dict.get('IMPLEMENTOR')
+    if implementor is not None:
+        if implementor == 'Oracle Corporation':
+            edition = 'ee'
+        else:
+            edition = 'ce'
+    else:
+        mx.warn('Release file for `LLVM_JAVA_HOME` ({}) is missing the IMPLEMENTOR field')
+        edition = 'ce'
+
     mx_sdk_vm.register_graalvm_component(mx_sdk_vm.GraalVmLanguage(
         suite=_suite,
-        name='Espresso LLVM Java libraries',
+        name='Java on Truffle LLVM Java libraries',
         short_name='ellvm',
         license_files=[],
         third_party_license_files=[],
@@ -221,11 +232,12 @@ if LLVM_JAVA_HOME:
         include_in_polyglot=False,
         dir_name='java',
         installable_id='espresso-llvm',
+        extra_installable_qualifiers=[edition],
         installable=True,
         dependencies=['Java on Truffle', 'LLVM Runtime Native'],
         support_distributions=['espresso:ESPRESSO_LLVM_SUPPORT'],
         priority=2,
-        stability="experimental",
+        stability="supported",
     ))
 
 
@@ -258,7 +270,7 @@ mx_sdk_vm.register_graalvm_component(mx_sdk_vm.GraalVmJreComponent(
     dependencies=['Java on Truffle'],
     support_libraries_distributions=['espresso:ESPRESSO_JVM_SUPPORT'],
     priority=2,
-    stability="experimental",
+    stability="supported",
 ))
 
 mx_sdk_vm.register_graalvm_component(mx_sdk_vm.GraalVmLanguage(
