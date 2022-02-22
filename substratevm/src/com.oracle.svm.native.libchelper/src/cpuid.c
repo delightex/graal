@@ -569,15 +569,15 @@ static uint32_t cpu_has(const char* optional) {
 }
 
 void determineCPUFeatures(CPUFeatures* features) {
-  features->fFP = !!(cpu_has("hw.optional.floatingpoint"));
-  features->fASIMD = !!(cpu_has("hw.optional.neon"));
+  features->fFP = 1; // !!(cpu_has("hw.optional.floatingpoint"));
+  features->fASIMD = 1; // !!(cpu_has("hw.optional.neon"));
   features->fEVTSTRM = 0;
   features->fAES = 0;
   features->fPMULL = 0;
   features->fSHA1 = 0;
   features->fSHA2 = 0;
-  features->fCRC32 = !!(cpu_has("hw.optional.armv8_crc32"));
-  features->fLSE = !!(cpu_has("hw.optional.armv8_1_atomics"));
+  features->fCRC32 = 1; // !!(cpu_has("hw.optional.armv8_crc32"));
+  features->fLSE = 1; // !!(cpu_has("hw.optional.armv8_1_atomics"));
   features->fDCPOP = 0;
   features->fSHA3 = 0;
   features->fSHA512 = 0;
